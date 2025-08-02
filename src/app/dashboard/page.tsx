@@ -147,7 +147,7 @@ export default function DashboardPage() {
         {/* Skill List */}
         <section className="">
           <h2 className="text-xl font-semibold mb-4">Your Skills</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto bg-amber-400 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-visible">
             {/* h-[calc(100vh-270px)] */}
             {skillList.length ? (
               skillList.map((skill, index) => (
