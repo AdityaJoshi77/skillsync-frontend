@@ -69,7 +69,7 @@ export default function LoginBox({
             name="email"
             type="email"
             placeholder="Email"
-            className="px-4 py-2 border rounded-md bg-gray-100 focus:outline-none placeholder:text-sm focus:ring-2 focus:ring-cyan-600"
+            className="px-4 py-2 border rounded-lg bg-gray-100 focus:outline-none placeholder:text-sm focus:ring-2 focus:ring-cyan-600"
             required={true}
             onChange={handleChange}
           />
@@ -77,19 +77,19 @@ export default function LoginBox({
           <label htmlFor="password-input" className="mb-1 text-sm">
             Password
           </label>
-          <div className="relative w-full bg-yellow-500">
+          <div className="relative w-full">
             <input
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className="px-4 py-2 border rounded-md w-full bg-gray-100 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-600"
+              className="px-4 py-2 border rounded-lg w-full bg-gray-100 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-600"
               required={true}
               onChange={handleChange}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3.5"
+              className="absolute right-3 top-3.5 cursor-pointer"
             >
               {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
             </button>
@@ -102,7 +102,7 @@ export default function LoginBox({
 
           <button
             type="submit"
-            className="bg-cyan-700 text-white py-2 rounded-md cursor-pointer hover:bg-cyan-600 transition"
+            className="bg-cyan-700 text-white py-2 rounded-lg cursor-pointer hover:bg-cyan-600 transition"
           >
             Login
           </button>

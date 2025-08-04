@@ -2,21 +2,22 @@
 
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
-import TaskCard from "@/components/RoadMapComponents/SkillCard";
+import SkillCard from "@/components/SkillComponents/SkillCard";
 import Spinner from "@/components/UtilityComponents/Spinner";
 import { useRouter } from "next/navigation"; // Correct one for app router
+import type { ModuleData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
 
-interface Task {
-  title: string;
-  type: string;
-  status: string;
-}
+// interface Task {
+//   title: string;
+//   type: string;
+//   status: string;
+// }
 
 interface skill {
   _id: string;
   user: string;
   title: string;
-  modules: Task[];
+  modules: ModuleData[];
 }
 
 export default function DashboardPage() {
@@ -25,6 +26,7 @@ export default function DashboardPage() {
   const [newSkillTitle, setNewSkillTitle] = useState<string>("");
   const [skillList, setSkillList] = useState<skill[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>("");
 
   // periodic check to ensure session validity
   useEffect(() => {
@@ -75,14 +77,24 @@ export default function DashboardPage() {
   // Create a new skill
   const createSkill = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSkillTitle || !user) return;
+    const trimmed = newSkillTitle.trim();
+
+    if (!trimmed) {
+      setError("Skill title cannot be empty.");
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
 
     try {
-      const res = await api.post("/skill", { title: newSkillTitle });
-      setNewSkillTitle("");
+      const res = await api.post("/skill", { title: trimmed });
       setSkillList((prev) => [...prev, res.data]);
-    } catch (error) {
-      console.error("Error creating skill:", error);
+      setNewSkillTitle("");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || "Failed to create skill.";
+      setError(`ERROR! : "${newSkillTitle}" is not a valid Tech Skill. ${msg}`);
+      setNewSkillTitle('');
+      setTimeout(() => setError(null), 5000);
+      console.error("Error creating skill:", err);
     }
   };
 
@@ -124,7 +136,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Task Creation Section */}
-        <section className="mb-8">
+        <section className="mb-8 flex flex-col justify-start">
           <h2 className="text-xl font-semibold mb-2">Learn a New Skill</h2>
           <form className="flex gap-2" onSubmit={createSkill}>
             <input
@@ -142,20 +154,23 @@ export default function DashboardPage() {
               Create Skill
             </button>
           </form>
+          <p className=" text-red-400 text-md font-semibold text-center mt-2 opacity-100 transition-opacity duration-1000">
+            {error}
+          </p>
         </section>
 
         {/* Skill List */}
         <section className="">
           <h2 className="text-xl font-semibold mb-4">Your Skills</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-visible">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-visible bg-green-200">
             {/* h-[calc(100vh-270px)] */}
             {skillList.length ? (
               skillList.map((skill, index) => (
-                <TaskCard
+                <SkillCard
                   key={index}
                   skillId={skill._id}
                   skillTitle={skill.title}
-                  modules={skill.modules.map((sub: any) => sub.title)}
+                  modules={skill.modules}
                   handleDeleteSkill={handleDeleteSkill}
                   skillList={skillList}
                   setSkillList={setSkillList}

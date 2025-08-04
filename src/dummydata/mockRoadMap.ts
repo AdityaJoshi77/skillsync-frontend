@@ -1,139 +1,67 @@
-const mockTasks = [
-  {
-    _id: "task1",
-    user: "64f104eabc1234567890abcd",
-    title: "Learn HTML & CSS Basics",
-    subtasks: [
-      {
-        title: "Understand HTML structure and tags",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Learn how to style with CSS",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Build a personal homepage using HTML & CSS",
-        type: "Practice",
-        status: "Pending",
-      },
-      {
-        title: "Create a simple portfolio website",
-        type: "Project",
-        status: "Pending",
-      },
-    ],
-  },
-  {
-    _id: "task2",
-    user: "64f104eabc1234567890abcd",
-    title: "Introduction to JavaScript",
-    subtasks: [
-      {
-        title: "Learn JS variables, data types, and operators",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Understand conditionals and loops",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Practice writing simple functions",
-        type: "Practice",
-        status: "Pending",
-      },
-      {
-        title: "Build a number guessing game",
-        type: "Project",
-        status: "Pending",
-      },
-    ],
-  },
-  {
-    _id: "task3",
-    user: "64f104eabc1234567890abcd",
-    title: "Getting Started with Git & GitHub",
-    subtasks: [
-      {
-        title: "Understand version control concepts",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Learn Git basics: init, add, commit",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Practice pushing code to a GitHub repo",
-        type: "Practice",
-        status: "Pending",
-      },
-      {
-        title: "Contribute to a dummy open-source repo",
-        type: "Project",
-        status: "Pending",
-      },
-    ],
-  },
-  {
-    _id: "task4",
-    user: "64f104eabc1234567890abcd",
-    title: "Learn React Fundamentals",
-    subtasks: [
-      {
-        title: "Understand components, props, and JSX",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Learn useState and useEffect hooks",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Create a counter and todo app",
-        type: "Practice",
-        status: "Pending",
-      },
-      {
-        title: "Build a basic weather app with API integration",
-        type: "Project",
-        status: "Pending",
-      },
-    ],
-  },
-  {
-    _id: "task5",
-    user: "64f104eabc1234567890abcd",
-    title: "Intro to Node.js & Express",
-    subtasks: [
-      {
-        title: "Understand what Node.js is and how it works",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Learn how to set up a basic Express server",
-        type: "Learning",
-        status: "Pending",
-      },
-      {
-        title: "Practice building simple REST APIs",
-        type: "Practice",
-        status: "Pending",
-      },
-      {
-        title: "Create a backend for a notes app",
-        type: "Project",
-        status: "Pending",
-      },
-    ],
-  },
-];
 
-export default mockTasks;
+interface Submodule {
+  title: string;
+  type: "Learning" | "Practice" | "Project";
+  status: string;
+}
+
+interface RoadmapData {
+  title: string;
+  status: string;
+  submodules: Submodule[];
+}
+
+
+const roadmap: RoadmapData[] = [
+  {
+    title: "Setting up your environment",
+    status: "Pending",
+    submodules: [
+      { title: "Install Node.js and npm", type: "Learning", status: "Pending" },
+      { title: "Set up a code editor (e.g., VS Code)", type: "Learning", status: "Pending" },
+      { title: "Initialize a React project using Vite or CRA", type: "Practice", status: "Pending" },
+      { title: "Explore folder structure", type: "Learning", status: "Pending" }
+    ]
+  },
+  {
+    title: "JSX and Components",
+    status: "Pending",
+    submodules: [
+      { title: "Understand JSX syntax", type: "Learning", status: "Pending" },
+      { title: "Create functional components", type: "Practice", status: "Pending" },
+      { title: "Use React fragments", type: "Learning", status: "Pending" },
+      { title: "Nest components", type: "Practice", status: "Pending" },
+      { title: "Build a basic reusable Button component", type: "Project", status: "Pending" }
+    ]
+  },
+  {
+    title: "Props and State",
+    status: "Pending",
+    submodules: [
+      { title: "Pass props between components", type: "Learning", status: "Pending" },
+      { title: "Use useState hook", type: "Learning", status: "Pending" },
+      { title: "Build a counter app", type: "Practice", status: "Pending" },
+      { title: "Create a dynamic Todo list with props/state", type: "Project", status: "Pending" }
+    ]
+  },
+  {
+    title: "Events and Forms",
+    status: "Pending",
+    submodules: [
+      { title: "Handle button clicks", type: "Learning", status: "Pending" },
+      { title: "Manage input fields with state", type: "Practice", status: "Pending" },
+      { title: "Build a signup form", type: "Project", status: "Pending" },
+      { title: "Validate form inputs", type: "Learning", status: "Pending" }
+    ]
+  },
+  {
+    title: "Advanced Concepts",
+    status: "Pending",
+    submodules: [
+      { title: "Use useEffect for side effects", type: "Learning", status: "Pending" },
+      { title: "Lift state up across components", type: "Practice", status: "Pending" },
+      { title: "Manage conditional rendering", type: "Learning", status: "Pending" },
+      { title: "Build a weather dashboard using an API", type: "Project", status: "Pending" }
+    ]
+  }
+];
