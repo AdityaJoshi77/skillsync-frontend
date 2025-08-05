@@ -7,7 +7,19 @@ interface SubModuleData {
 interface ModuleData {
   title: string;
   status: string;
+  progress:number;
   submodules: SubModuleData[];
 }
 
-export type {ModuleData, SubModuleData}
+interface LoginData{
+    email:String,
+    password:String
+}
+
+interface SignUpData{
+    name: String,
+    email: String,
+    password: String
+}
+
+export type {ModuleData, SubModuleData, LoginData, SignUpData}

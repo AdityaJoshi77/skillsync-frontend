@@ -1,18 +1,19 @@
 "use client";
 
-
 import api from "@/lib/axios";
 import { signUpFunction } from "@/utility_functions/auth_functions";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useState } from "react";
+import { loginFunction } from "@/utility_functions/auth_functions";
+import { useRouter } from "next/navigation";
 
-
-interface SignUpBoxProps{
-    loginOrSignup:boolean,
-    setLoginOrSignup:(data:boolean)=>void
+interface SignUpBoxProps {
+  loginOrSignup: boolean;
+  setLoginOrSignup: (data: boolean) => void;
 }
 
-const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
+const SignUpBox = ({ loginOrSignup, setLoginOrSignup }: SignUpBoxProps) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,7 +24,6 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
   });
 
   const [error, setError] = useState("");
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
@@ -31,25 +31,34 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-        const apiResponse = await signUpFunction(formData);
-        console.log("Registered", apiResponse.data);
-    } catch (error : any) {
-        const msg = error.response?.data?.msg || 'SignUp Failed';
-        setError(msg);
-    }    
+      const registerResponse = await signUpFunction(formData);
+      console.log("Registered", registerResponse.data);
+      const loginResponse = await loginFunction({
+        email: formData.email,
+        password: formData.password,
+      });
+      console.log("Successfully Logged in : ", loginResponse);
+      router.push("/dashboard");
+    } catch (error: any) {
+      const msg = error.response?.data?.msg || "SignUp Failed";
+      setError(msg);
+    }
   };
 
   return (
     <div className="relative h-full w-full flex items-center justify-center bg-gray-800">
       {/* Top-right logo */}
       <div className="absolute top-4 right-4">
-        <p className="text-2xl font-semibold italic cursor-default text-slate-200">SkillSync</p>
+        <p className="text-2xl font-semibold italic cursor-default text-slate-200">
+          SkillSync
+        </p>
       </div>
 
       {/* Signup Box */}
@@ -106,7 +115,7 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3.5"
+                className="absolute right-3 top-3.5 cursor-pointer"
               >
                 {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
               </button>
@@ -115,7 +124,10 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor="confirmPassword" className="mb-1 text-sm text-slate-200">
+            <label
+              htmlFor="confirmPassword"
+              className="mb-1 text-sm text-slate-200"
+            >
               Confirm Password
             </label>
             <div className="relative w-full">
@@ -130,7 +142,7 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-3.5"
+                className="absolute right-3 top-3.5 cursor-pointer"
               >
                 {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
               </button>
@@ -139,7 +151,9 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
 
           {/* Error Message */}
           {error && (
-            <p className="text-sm text-red-600 text-center -mt-4">Error: {error}</p>
+            <p className="text-sm text-red-600 text-center -mt-4">
+              Error: {error}
+            </p>
           )}
 
           {/* Submit */}
@@ -147,20 +161,22 @@ const SignUpBox = ({loginOrSignup, setLoginOrSignup}:SignUpBoxProps) => {
             type="submit"
             className="bg-gray-800 text-white py-2 rounded-lg cursor-pointer border-[0.1px] border-slate-400 hover:bg-gray-300 hover:text-black transition"
           >
-            Sign Up
+            SignUp and Login
           </button>
         </form>
 
         <p className="text-sm text-center text-slate-200 mt-6 ">
           Already have an account?{" "}
-          <span onClick={()=>setLoginOrSignup(!loginOrSignup)} className="text-yellow-500 hover:underline cursor-pointer">
+          <span
+            onClick={() => setLoginOrSignup(!loginOrSignup)}
+            className="text-yellow-500 hover:underline cursor-pointer"
+          >
             Login
           </span>
         </p>
       </div>
     </div>
   );
-}
-
+};
 
 export default SignUpBox;

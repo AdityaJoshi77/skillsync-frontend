@@ -1,7 +1,15 @@
 // overall progress percentage
 // module specific progress percentage
 
-import type { ModuleData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
+import type { ModuleData } from "@/InterfacesAndTypes/Interfaces";
+
+export const getOverallProgress = (moduleData: ModuleData[]) => {
+  // returns the precalculated progress number of the skill
+}
+
+export const getMmoduleProgress = (module: ModuleData) => {
+  // returns the precalculated progress number of the module
+}
 
 export const calculateOverallProgress = (moduleData: ModuleData[]) => {
   let totalModules = moduleData.length;

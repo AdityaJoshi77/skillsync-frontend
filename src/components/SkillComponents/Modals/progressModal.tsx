@@ -13,12 +13,14 @@ import {
 
 interface SampleRoadmapModalProps {
   skillTitle: string;
+  skillProgress: Number;
   modules: ModuleData[];
   setShowProgressModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProgressModal = ({
   skillTitle,
+  skillProgress,
   modules,
   setShowProgressModal,
 }: SampleRoadmapModalProps) => {
@@ -36,10 +38,10 @@ const ProgressModal = ({
               <div className="mr-3 w-full bg-gray-200 rounded-full h-2.5 border-[0.5px] dark:bg-gray-800 dark:border-slate-500 dark:text-white">
                 <div
                   className="bg-yellow-500 h-2.5 rounded-full"
-                  style={{ width: `${calculateOverallProgress(modules)}%` }}
+                  style={{ width: `${skillProgress}%` }}
                 ></div>
               </div>
-              <p>{calculateOverallProgress(modules)}%</p>
+              <p>{`${skillProgress}`}%</p>
             </div>
           </div>
 
@@ -65,13 +67,13 @@ const ProgressModal = ({
                           <div
                             className="bg-yellow-500 h-2.5 rounded-full text-center"
                             style={{
-                              width: `${moduleSpecificProgress(module)}%`,
+                              width: `${module.progress}%`,
                             }}
                           ></div>
                         </div>
 
                         {/* Module Progress Percentage */}
-                        <p>{moduleSpecificProgress(module)}%</p>
+                        <p>{module.progress}%</p>
 
                         {/* Module Open/Close DropDown Button */}
                         <span>

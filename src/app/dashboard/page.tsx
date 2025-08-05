@@ -18,6 +18,7 @@ interface skill {
   _id: string;
   user: string;
   title: string;
+  skillProgress:number
   modules: ModuleData[];
 }
 
@@ -159,10 +160,7 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold mb-2 text-amber-50">
             Learn a New Skill
           </h2>
-          {/* <form
-            className="flex items-center justify-end gap-2"
-            onSubmit={createSkill}
-          > */}
+  
           <form
             className="flex items-center justify-end space-x-2"
             onSubmit={createSkill}
@@ -208,11 +206,11 @@ export default function DashboardPage() {
         </section>
 
         {/* Skill List */}
-        <section className="flex-1 flex-col w-full">
+        <section className="flex flex-col w-full h-[70%]">
           <h2 className="text-xl font-semibold mb-4 text-gray-300">
             Your Skills
           </h2>
-          <div className="flex flex-col items-center justify-start h-[90%] w-full gap-2 overflow-y-auto custom-scrollbar">
+          <div className="flex flex-col items-center justify-start h-full w-full gap-2 overflow-y-auto custom-scrollbar">
             {skillSetLoading ? (
               <Spinner_Window />
             ) : skillList.length ? (
@@ -221,6 +219,7 @@ export default function DashboardPage() {
                   key={index}
                   skillId={skill._id}
                   skillTitle={skill.title}
+                  skillProgress={skill.skillProgress}
                   modules={skill.modules}
                   handleDeleteSkill={handleDeleteSkill}
                   skillList={skillList}

@@ -20,12 +20,14 @@ interface Skill {
   _id: string;
   user: string;
   title: string;
+  skillProgress: number;
   modules: ModuleData[];
 }
 
 interface NewSkillCardProps {
   skillId: string;
   skillTitle: string;
+  skillProgress:number;
   modules: ModuleData[];
   skillList: Skill[];
   useAI?: boolean;
@@ -36,6 +38,7 @@ interface NewSkillCardProps {
 const NewSkillCard = ({
   skillId,
   skillTitle,
+  skillProgress,
   modules,
   handleDeleteSkill,
   useAI,
@@ -46,7 +49,7 @@ const NewSkillCard = ({
   const [previewData, setPreviewData] = useState<ModuleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState<boolean>(false);
-  const skillProgress = calculateOverallProgress(modules);
+  
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -94,7 +97,7 @@ const NewSkillCard = ({
   };
 
   return (
-    <main className="flex flex-row justify-between cursor-pointer w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md shadow-sm border">
+    <main className="flex flex-row justify-between cursor-pointer w-[97%] bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md shadow-sm border">
       {/* Title and tasklist view */}
       <div className="flex flex-row items-center">
         <h3 className="text-lg font-bold pr-6 text-slate-200">{skillTitle}</h3>
@@ -156,6 +159,7 @@ const NewSkillCard = ({
         {showProgressModal && (
           <ProgressModal
             skillTitle={skillTitle}
+            skillProgress={skillProgress}
             modules={modules}
             setShowProgressModal={setShowProgressModal}
           />
