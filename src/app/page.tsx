@@ -1,6 +1,7 @@
 "use client";
 import LoginBox from "../components/AuthComponents/LoginBox";
 import SignUpBox from "../components/AuthComponents/SignUpBox";
+import { Spinner_Window } from "@/components/UtilityComponents/Spinner";
 import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -8,12 +9,14 @@ import { useEffect } from "react";
 
 export default function Home() {
   const [loginOrSignup, setLoginOrSignup] = useState<boolean>(true);
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
   useEffect(() => {
     const checkUser = async () => {
       try {
+        setPageLoading(true);
         const res = await api.get("/auth/me");
         if (res.data) {
           console.log("Response data : ", res.data);
@@ -23,18 +26,28 @@ export default function Home() {
         }
       } catch (err) {
         console.log("User not logged in");
+      } finally{
+        setPageLoading(false);
       }
     };
 
     checkUser();
   }, []);
 
+  if (pageLoading) {
+    return (
+      <div className="h-screen w-screen">
+        <Spinner_Window />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-row w-full h-screen">
       {/* LEFT PANEL : HERO SECTION */}
-      <div className="flex items-center justify-center w-1/2 border-1 bg-cyan-700">
+      <div className="flex items-center justify-center w-[50%] border-1 bg-gray-800">
 
-        <div className="flex flex-col justify-center items-start w-full h-full px-12 text-white space-y-6">
+        <div className="flex flex-col justify-center items-start w-full h-full px-12 text-white space-y-6 bg-gradient-to-br from-yellow-800 to-yellow-300">
           <h1 className="text-4xl font-bold leading-tight">
             Learn. Build. Master.
           </h1>
@@ -59,7 +72,7 @@ export default function Home() {
       </div>
 
       {/* RIGHT PANEL : LOGIN / REGISTER BOX */}
-      <div className="flex items-center justify-center border-1 w-1/2 bg-blue-800">
+      <div className="flex items-center justify-center border-1 w-[50%] bg-blue-800">
         {loginOrSignup ? (
           <LoginBox
             loginOrSignup={loginOrSignup}

@@ -1,6 +1,7 @@
 "use client";
 
 import ModalPortal from "@/components/ModalPortals/ModalPortal";
+import { useEffect } from "react";
 
 interface SubModuleData {
   title: string;
@@ -27,6 +28,11 @@ const SampleRoadmapModal = ({
   handleAcceptRoadmap,
   setShowSampleRoadmapModal,
 }: SampleRoadmapModalProps) => {
+
+  // useEffect(() => {
+  //   console.log(previewData);
+  // },[]);
+
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">

@@ -47,22 +47,22 @@ export default function LoginBox({
   };
 
   return (
-    <div className="relative h-full w-full flex items-center justify-center bg-gray-50">
+    <div className="relative h-full w-full flex items-center justify-center bg-gray-800">
       {/* Top-right logo */}
       <div className="absolute top-4 right-4">
-        <p className="text-2xl font-semibold italic cursor-default">SkillSync</p>
+        <p className="text-2xl font-semibold italic cursor-default text-slate-200">SkillSync</p>
       </div>
 
       {/* Login Box */}
-      <div className="w-full max-w-sm p-6 rounded-2xl  bg-gray-50">
-        <h2 className="text-xl font-semibold mb-6 text-center">
+      <div className="w-full max-w-sm p-6 rounded-xl border-[0.1px] border-slate-400 bg-gray-800">
+        <h2 className="text-xl font-semibold mb-6 text-center text-slate-200">
           Log in to your account
         </h2>
 
         <form 
             onSubmit={handleSubmit}
             className="flex flex-col space-y-6">
-          <label htmlFor="email-input" className="mb-1 text-sm">
+          <label htmlFor="email-input" className="mb-1 text-sm text-slate-200">
             Email
           </label>
           <input
@@ -74,7 +74,7 @@ export default function LoginBox({
             onChange={handleChange}
           />
 
-          <label htmlFor="password-input" className="mb-1 text-sm">
+          <label htmlFor="password-input" className="mb-1 text-sm text-slate-200">
             Password
           </label>
           <div className="relative w-full">
@@ -97,22 +97,22 @@ export default function LoginBox({
         
           {/* Error Message */}
           {error && (
-            <p className="text-sm text-red-600 text-center -mt-4">Error! : {error}</p>
+            <p className="text-sm text-red-500 text-center -mt-4">Error : {error}</p>
           )}
 
           <button
             type="submit"
-            className="bg-cyan-700 text-white py-2 rounded-lg cursor-pointer hover:bg-cyan-600 transition"
+            className="bg-gray-800 text-white py-2 rounded-lg cursor-pointer border-[0.1px] border-slate-400 hover:bg-gray-300 hover:text-black transition"
           >
             Login
           </button>
         </form>
 
-        <p className="text-sm text-center mt-6">
+        <p className="text-sm text-center text-slate-200 mt-6">
           Don&apos;t have an account?{" "}
           <span
             onClick={() => setLoginOrSignup(!loginOrSignup)}
-            className="text-blue-600 hover:underline cursor-pointer"
+            className="text-yellow-500 hover:underline cursor-pointer"
           >
             Sign Up
           </span>

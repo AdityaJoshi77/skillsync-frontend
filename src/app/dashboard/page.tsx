@@ -3,15 +3,16 @@
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import SkillCard from "@/components/SkillComponents/SkillCard";
-import Spinner from "@/components/UtilityComponents/Spinner";
+import {
+  Spinner_Element,
+  Spinner_Window,
+} from "@/components/UtilityComponents/Spinner";
 import { useRouter } from "next/navigation"; // Correct one for app router
-import type { ModuleData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
-
-// interface Task {
-//   title: string;
-//   type: string;
-//   status: string;
-// }
+import type {
+  ModuleData,
+  SubModuleData,
+} from "@/InterfacesAndTypes/Interfaces";
+import { Span } from "next/dist/trace";
 
 interface skill {
   _id: string;
@@ -25,8 +26,13 @@ export default function DashboardPage() {
   const [user, setUser] = useState<{ name: string; _id: string } | null>(null);
   const [newSkillTitle, setNewSkillTitle] = useState<string>("");
   const [skillList, setSkillList] = useState<skill[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
+  const [skillSetLoading, setSkillSetLoading] = useState<boolean>(false);
+  const [skillButttonLoading, setSkillButtonLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>("");
+
+  // only for testing phase
+  const [useAI, setUseAI] = useState<boolean>(false);
 
   // periodic check to ensure session validity
   useEffect(() => {
@@ -37,7 +43,7 @@ export default function DashboardPage() {
         console.log("Session expired. Redirecting...");
         router.push("/");
       } finally {
-        // setLoading(false);
+        // setPageLoading(false);
       }
     }, 60000); // check every 60 seconds
 
@@ -48,7 +54,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUserAndTasks = async () => {
       try {
-        setLoading(true);
+        setPageLoading(true);
         const res = await api.get("/auth/me");
         if (!res.data) throw new Error("Unauthorized");
         setUser(res.data);
@@ -57,7 +63,7 @@ export default function DashboardPage() {
         console.log(err);
         router.push("/");
       } finally {
-        setLoading(false);
+        setPageLoading(false);
       }
     };
 
@@ -67,17 +73,21 @@ export default function DashboardPage() {
   // Fetch skills
   const getSkills = async (userId: string) => {
     try {
+      setSkillSetLoading(true);
       const res = await api.get(`/skill/${userId}`);
       setSkillList(res.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
+    } finally {
+      setSkillSetLoading(false);
     }
   };
 
   // Create a new skill
   const createSkill = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = newSkillTitle.trim();
+    setSkillButtonLoading(true);
+    const trimmed = newSkillTitle.trim().toLowerCase();
 
     if (!trimmed) {
       setError("Skill title cannot be empty.");
@@ -86,15 +96,18 @@ export default function DashboardPage() {
     }
 
     try {
-      const res = await api.post("/skill", { title: trimmed });
+      const res = await api.post("/skill", { title: trimmed, useAI });
+      console.log(res.data);
       setSkillList((prev) => [...prev, res.data]);
       setNewSkillTitle("");
     } catch (err: any) {
       const msg = err?.response?.data?.message || "Failed to create skill.";
-      setError(`ERROR! : "${newSkillTitle}" is not a valid Tech Skill. ${msg}`);
-      setNewSkillTitle('');
+      setError(`ERROR : ${msg}`);
+      setNewSkillTitle("");
       setTimeout(() => setError(null), 5000);
       console.error("Error creating skill:", err);
+    } finally {
+      setSkillButtonLoading(false);
     }
   };
 
@@ -118,18 +131,24 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading) {
-    return <Spinner />;
+  if (pageLoading) {
+    return (
+      <div className="h-screen w-screen">
+        <Spinner_Window />
+      </div>
+    );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto flex flex-col">
+    <main className="h-screen bg-gray-800 p-6">
+      <div className="flex flex-col h-full max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Welcome Back {user?.name} 👋</h1>
+          <h1 className="text-3xl font-bold text-gray-300">
+            Welcome Back {user?.name}
+          </h1>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
+            className="px-4 py-2 bg-red-700 text-white rounded-lg cursor-pointer hover:bg-red-600"
           >
             Logout
           </button>
@@ -137,34 +156,66 @@ export default function DashboardPage() {
 
         {/* Task Creation Section */}
         <section className="mb-8 flex flex-col justify-start">
-          <h2 className="text-xl font-semibold mb-2">Learn a New Skill</h2>
-          <form className="flex gap-2" onSubmit={createSkill}>
+          <h2 className="text-xl font-semibold mb-2 text-amber-50">
+            Learn a New Skill
+          </h2>
+          {/* <form
+            className="flex items-center justify-end gap-2"
+            onSubmit={createSkill}
+          > */}
+          <form
+            className="flex items-center justify-end space-x-2"
+            onSubmit={createSkill}
+          >
             <input
               type="text"
               value={newSkillTitle}
               placeholder="What do you want to learn?"
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-full text-gray-300"
               onChange={(e) => setNewSkillTitle(e.target.value)}
               required
             />
+
+            {/* Yes/No Toggle */}
+            <button
+              type="button"
+              onClick={() => setUseAI((prev) => !prev)}
+              className={`px-4 py-2 rounded-full border transition duration-100 cursor-pointer ${
+                useAI ? "bg-gray-300 text-black" : "bg-gray-800 text-white"
+              }`}
+            >
+              {useAI ? "AI active" : "AI not active"}
+            </button>
+
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700"
+              className="flex items-center justify-between px-4 py-2 bg-gray-300 text-gray-900 rounded-full cursor-pointer hover:bg-gray-50"
             >
-              Create Skill
+              {skillButttonLoading ? (
+                <span className="animate animate-pulse flex items-center justify-between">
+                  Creating Skill...
+                  <Spinner_Element />
+                </span>
+              ) : (
+                "Create Skill"
+              )}
             </button>
           </form>
+
           <p className=" text-red-400 text-md font-semibold text-center mt-2 opacity-100 transition-opacity duration-1000">
             {error}
           </p>
         </section>
 
         {/* Skill List */}
-        <section className="">
-          <h2 className="text-xl font-semibold mb-4">Your Skills</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-visible bg-green-200">
-            {/* h-[calc(100vh-270px)] */}
-            {skillList.length ? (
+        <section className="flex-1 flex-col w-full">
+          <h2 className="text-xl font-semibold mb-4 text-gray-300">
+            Your Skills
+          </h2>
+          <div className="flex flex-col items-center justify-start h-[90%] w-full gap-2 overflow-y-auto custom-scrollbar">
+            {skillSetLoading ? (
+              <Spinner_Window />
+            ) : skillList.length ? (
               skillList.map((skill, index) => (
                 <SkillCard
                   key={index}
@@ -173,11 +224,12 @@ export default function DashboardPage() {
                   modules={skill.modules}
                   handleDeleteSkill={handleDeleteSkill}
                   skillList={skillList}
+                  useAI={useAI}
                   setSkillList={setSkillList}
                 />
               ))
             ) : (
-              <p>No skills to show</p>
+              <p className="text-gray-300">No skills to show</p>
             )}
           </div>
         </section>
