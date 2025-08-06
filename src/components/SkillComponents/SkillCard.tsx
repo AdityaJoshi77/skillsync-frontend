@@ -20,14 +20,14 @@ interface Skill {
   _id: string;
   user: string;
   title: string;
-  skillProgress: number;
+  progress: number;
   modules: ModuleData[];
 }
 
 interface NewSkillCardProps {
   skillId: string;
   skillTitle: string;
-  skillProgress:number;
+  progress:number;
   modules: ModuleData[];
   skillList: Skill[];
   useAI?: boolean;
@@ -38,7 +38,7 @@ interface NewSkillCardProps {
 const NewSkillCard = ({
   skillId,
   skillTitle,
-  skillProgress,
+  progress,
   modules,
   handleDeleteSkill,
   useAI,
@@ -118,7 +118,7 @@ const NewSkillCard = ({
         {modules.length ? (
           <div className="flex flex-row items-center justify-end w-full">
             <ProgressBar
-              progressPercent={skillProgress}
+              progressPercent={progress}
               showProgressPercent={true}
             />
             <button
@@ -159,7 +159,7 @@ const NewSkillCard = ({
         {showProgressModal && (
           <ProgressModal
             skillTitle={skillTitle}
-            skillProgress={skillProgress}
+            skillProgress={progress}
             modules={modules}
             setShowProgressModal={setShowProgressModal}
           />

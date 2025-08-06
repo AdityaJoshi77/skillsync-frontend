@@ -10,15 +10,14 @@ import {
 import { useRouter } from "next/navigation"; // Correct one for app router
 import type {
   ModuleData,
-  SubModuleData,
 } from "@/InterfacesAndTypes/Interfaces";
-import { Span } from "next/dist/trace";
+
 
 interface skill {
   _id: string;
   user: string;
   title: string;
-  skillProgress:number
+  progress:number
   modules: ModuleData[];
 }
 
@@ -219,7 +218,7 @@ export default function DashboardPage() {
                   key={index}
                   skillId={skill._id}
                   skillTitle={skill.title}
-                  skillProgress={skill.skillProgress}
+                  progress={skill.progress}
                   modules={skill.modules}
                   handleDeleteSkill={handleDeleteSkill}
                   skillList={skillList}
