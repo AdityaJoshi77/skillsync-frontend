@@ -2,62 +2,48 @@
 
 import api from "@/lib/axios";
 import { HiOutlineTrash } from "react-icons/hi";
+import { HiOutlineDotsVertical } from "react-icons/hi";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import { useState } from "react";
 import SampleRoadmapModal from "./Modals/SampleRoadmapModal";
 import ProgressModal from "./Modals/progressModal";
-import {
-  calculateOverallProgress,
-  moduleSpecificProgress,
-} from "@/utility_functions/calculateProgress";
 
 import { ProgressBar } from "../UtilityComponents/ProgressBar";
 
-import type { ModuleData } from "@/InterfacesAndTypes/Interfaces";
+import type { SkillData, ModuleData } from "@/InterfacesAndTypes/Interfaces";
 import { Spinner_Element } from "../UtilityComponents/Spinner";
+import { useRouter } from "next/navigation";
 
-interface Skill {
-  _id: string;
-  user: string;
-  title: string;
-  progress: number;
-  modules: ModuleData[];
-}
 
 interface NewSkillCardProps {
-  skillId: string;
-  skillTitle: string;
-  progress:number;
-  modules: ModuleData[];
-  skillList: Skill[];
+  skill: SkillData;
   useAI?: boolean;
   handleDeleteSkill: (skillId: string) => void;
-  setSkillList: React.Dispatch<React.SetStateAction<Skill[]>>;
+  setSkillList: React.Dispatch<React.SetStateAction<SkillData[]>>;
 }
 
-const NewSkillCard = ({
-  skillId,
-  skillTitle,
-  progress,
-  modules,
+const SkillCard = ({
+  skill,
   handleDeleteSkill,
   useAI,
-  skillList,
   setSkillList,
 }: NewSkillCardProps) => {
+  const router = useRouter();
   const [showSampleRoadmapModal, setShowSampleRoadmapModal] = useState(false);
   const [previewData, setPreviewData] = useState<ModuleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState<boolean>(false);
-  
+  const [generatingRoadmap, setGeneratingRoadmap] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const handleGenerate = async () => {
     setLoading(true);
+    setGeneratingRoadmap(true);
     try {
       const roadmapController = useAI ? "generateGemini" : "generateDummy";
       console.log("Roadmap generation via ", roadmapController);
       const res = await api.post(`/roadmap/${roadmapController}`, {
-        title: skillTitle,
+        title: skill.title,
       });
 
       console.log("✅ Roadmap received:", res.data);
@@ -72,13 +58,14 @@ const NewSkillCard = ({
       console.error("❌ Unexpected error during roadmap generation:", err);
     } finally {
       setLoading(false);
+      setGeneratingRoadmap(false);
     }
   };
 
   const handleAcceptRoadmap = async () => {
     try {
       const res = await api.post("/roadmap/accept", {
-        skillId,
+        skillId: skill._id,
         roadmap: previewData,
       });
 
@@ -86,7 +73,7 @@ const NewSkillCard = ({
 
       // update skill list
       setSkillList((prev) => [
-        ...prev.filter((skill) => skill._id !== skillId),
+        ...prev.filter((s) => s._id !== skill._id),
         res.data.skill,
       ]);
 
@@ -97,16 +84,20 @@ const NewSkillCard = ({
   };
 
   return (
-    <main className="flex flex-row justify-between cursor-pointer w-[97%] bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md shadow-sm border">
+    <main
+      className={`flex flex-row justify-between cursor-pointer w-[97%] bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md shadow-sm border ${
+        generatingRoadmap && "relative overflow-hidden shimmer-bg"
+      } `}
+    >
       {/* Title and tasklist view */}
       <div className="flex flex-row items-center">
-        <h3 className="text-lg font-bold pr-6 text-slate-200">{skillTitle}</h3>
+        <h3 className="text-lg font-bold pr-6 text-slate-200">{skill.title}</h3>
       </div>
 
       <div>
         {showSampleRoadmapModal && (
           <SampleRoadmapModal
-            skillTitle={skillTitle}
+            skillTitle={skill.title}
             previewData={previewData}
             handleAcceptRoadmap={handleAcceptRoadmap}
             setShowSampleRoadmapModal={setShowSampleRoadmapModal}
@@ -115,17 +106,17 @@ const NewSkillCard = ({
       </div>
 
       <div className="flex flex-row items-center justify-end w-2/5">
-        {modules.length ? (
+        {skill.modules.length ? (
           <div className="flex flex-row items-center justify-end w-full">
             <ProgressBar
-              progressPercent={progress}
+              progressPercent={skill.progress}
               showProgressPercent={true}
             />
             <button
-              className=" bg-gray-300 hover:bg-gray-50 text-black cursor-pointer rounded-md px-2 py-1 text-xs mr-2"
-              onClick={() => setShowProgressModal(true)}
+              className=" bg-gray-300 hover:bg-gray-50 text-black cursor-pointer rounded-md px-3 py-1 text-sm mr-2"
+              onClick={() => router.push(`/skillPage/${skill._id}`)}
             >
-              Progress
+              Visit Skill
             </button>
           </div>
         ) : (
@@ -146,21 +137,47 @@ const NewSkillCard = ({
         )}
 
         {/* Card Action Buttons */}
-        <div className="flex h-[95%] items-center justify-center -mr-2">
+        <div className="relative flex items-center justify-center">
           <button
-            className="text-gray-400 hover:text-gray-300 cursor-pointer"
-            onClick={() => handleDeleteSkill(skillId)}
-            aria-label="Delete Skill"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMenu((prev) => !prev);
+            }}
+            className="text-gray-400 hover:text-gray-200 cursor-pointer"
           >
-            <HiOutlineTrash className="w-5 h-5" />
+            <HiOutlineDotsVertical className="w-5 h-5 -mr-2" />
           </button>
+
+          {showMenu && (
+            <div className="absolute top-4 right-0 mt-2 w-32 bg-gray-800 border border-gray-600 rounded-md shadow-lg z-50">
+              {skill.modules.length > 0 && (
+                <button
+                  onClick={(e) => {
+                    // e.stopPropagation();
+                    setShowProgressModal(true);
+                    setShowMenu(false);
+                  }}
+                  className="cursor-pointer w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                >
+                  View Progress
+                </button>
+              )}
+              <button
+                onClick={(e) => {
+                  handleDeleteSkill(skill._id);
+                  setShowMenu(false);
+                }}
+                className="cursor-pointer w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
+              >
+                Delete Skill
+              </button>
+            </div>
+          )}
         </div>
 
         {showProgressModal && (
           <ProgressModal
-            skillTitle={skillTitle}
-            skillProgress={progress}
-            modules={modules}
+            skill = {skill}
             setShowProgressModal={setShowProgressModal}
           />
         )}
@@ -169,4 +186,13 @@ const NewSkillCard = ({
   );
 };
 
-export default NewSkillCard;
+const BlankSkillCard = () => {
+  return (
+    <main className="relative overflow-hidden shimmer-bg flex flex-row justify-between cursor-pointer h-[15%] w-[97%] bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md shadow-sm border">
+      {/* Your content here */}
+      {/* <p className="text-md text-blue-100 italic animate animate-pulse w-full">Loading</p> */}
+    </main>
+  );
+};
+
+export { SkillCard, BlankSkillCard };

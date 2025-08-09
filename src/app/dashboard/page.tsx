@@ -2,7 +2,7 @@
 
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
-import SkillCard from "@/components/SkillComponents/SkillCard";
+import {SkillCard, BlankSkillCard} from "@/components/SkillComponents/SkillCard";
 import {
   Spinner_Element,
   Spinner_Window,
@@ -10,28 +10,24 @@ import {
 import { useRouter } from "next/navigation"; // Correct one for app router
 import type {
   ModuleData,
+  UserData, 
+  SkillData
 } from "@/InterfacesAndTypes/Interfaces";
 
 
-interface skill {
-  _id: string;
-  user: string;
-  title: string;
-  progress:number
-  modules: ModuleData[];
-}
+
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; _id: string } | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [newSkillTitle, setNewSkillTitle] = useState<string>("");
-  const [skillList, setSkillList] = useState<skill[]>([]);
+  const [skillList, setSkillList] = useState<SkillData[]>([]);
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [skillSetLoading, setSkillSetLoading] = useState<boolean>(false);
   const [skillButttonLoading, setSkillButtonLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>("");
 
-  // only for testing phase
+  // only for testing phase in DEV (API Rate Limit Protection)
   const [useAI, setUseAI] = useState<boolean>(false);
 
   // periodic check to ensure session validity
@@ -56,9 +52,10 @@ export default function DashboardPage() {
       try {
         setPageLoading(true);
         const res = await api.get("/auth/me");
+        console.log('User Data : ',res.data);
         if (!res.data) throw new Error("Unauthorized");
         setUser(res.data);
-        getSkills(res.data._id);
+        getUserSkills(res.data._id);
       } catch (err) {
         console.log(err);
         router.push("/");
@@ -71,10 +68,10 @@ export default function DashboardPage() {
   }, []);
 
   // Fetch skills
-  const getSkills = async (userId: string) => {
+  const getUserSkills = async (userId: string) => {
     try {
       setSkillSetLoading(true);
-      const res = await api.get(`/skill/${userId}`);
+      const res = await api.get('/skill');
       setSkillList(res.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -131,13 +128,13 @@ export default function DashboardPage() {
     }
   };
 
-  if (pageLoading) {
-    return (
-      <div className="h-screen w-screen">
-        <Spinner_Window />
-      </div>
-    );
-  }
+  // if (pageLoading) {
+  //   return (
+  //     <div className="h-screen w-screen">
+  //       <Spinner_Window />
+  //     </div>
+  //   );
+  // }
 
   return (
     <main className="h-screen bg-gray-800 p-6">
@@ -173,7 +170,7 @@ export default function DashboardPage() {
               required
             />
 
-            {/* Yes/No Toggle */}
+            {/* use AI Toggle */}
             <button
               type="button"
               onClick={() => setUseAI((prev) => !prev)}
@@ -211,23 +208,26 @@ export default function DashboardPage() {
           </h2>
           <div className="flex flex-col items-center justify-start h-full w-full gap-2 overflow-y-auto custom-scrollbar">
             {skillSetLoading ? (
-              <Spinner_Window />
+              
+              user?.skillMetaData?.length ? (
+                user.skillMetaData.map((skill,index) => (
+                  <BlankSkillCard key = {index}/>
+              ))) : (
+                <p className="text-gray-300">No skills to show</p>
+              )
+
             ) : skillList.length ? (
               skillList.map((skill, index) => (
                 <SkillCard
                   key={index}
-                  skillId={skill._id}
-                  skillTitle={skill.title}
-                  progress={skill.progress}
-                  modules={skill.modules}
+                  skill={skill}
                   handleDeleteSkill={handleDeleteSkill}
-                  skillList={skillList}
                   useAI={useAI}
                   setSkillList={setSkillList}
                 />
               ))
             ) : (
-              <p className="text-gray-300">No skills to show</p>
+              <p className="text-gray-300"></p>
             )}
           </div>
         </section>

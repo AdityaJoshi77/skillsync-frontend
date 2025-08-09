@@ -19,7 +19,7 @@ export default function Home() {
         setPageLoading(true);
         const res = await api.get("/auth/me");
         if (res.data) {
-          console.log("Response data : ", res.data);
+          console.log("Currently Logged in User : ", res.data);
           router.push("/dashboard"); // user is already logged in
         } else {
           console.log("Token Not found, initiate new login");

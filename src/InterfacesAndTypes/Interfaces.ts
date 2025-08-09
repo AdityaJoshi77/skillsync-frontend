@@ -1,25 +1,61 @@
-interface SubModuleData {
+export interface noteData {
+  _id: String;
+  title: String;
+  content: String;
+}
+
+export interface SubModuleData {
+  _id:string;
   title: string;
   type: "Learning" | "Practice" | "Project";
+  content: {
+    youtubeLinks: String[];
+    articleLinks: String[];
+    aiSummary: String;
+  };
+  notes: noteData[];
   status: string;
 }
 
-interface ModuleData {
+export interface ModuleData {
+  _id:string;
   title: string;
   status: string;
-  progress:number;
+  progress: number;
   submodules: SubModuleData[];
 }
-
-interface LoginData{
-    email:String,
-    password:String
+export interface SkillData {
+  _id: string;
+  userId: string;
+  title: string;
+  modules: ModuleData[];
+  totalSubmodules: number;
+  completedSubModules: number;
+  progress: number;
 }
 
-interface SignUpData{
-    name: String,
-    email: String,
-    password: String
+export interface LoginData {
+  email: string;
+  password: string;
 }
 
-export type {ModuleData, SubModuleData, LoginData, SignUpData}
+export interface SignUpData {
+  name: string;
+  email: string;
+  password: String;
+}
+
+export interface SkillMetaData {
+  title: string;
+  skillId: string;
+  progress: number;
+}
+
+export interface UserData {
+  _id: string;
+  name: string;
+  email?: string;
+  skillMetaData?: SkillMetaData[];
+}
+
+

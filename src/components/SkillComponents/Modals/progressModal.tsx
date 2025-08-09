@@ -1,29 +1,22 @@
 "use client";
 
-import ModalPortal from "@/components/ModalPortals/ModalPortal";
-import type { ModuleData } from "@/InterfacesAndTypes/Interfaces";
+import ModalPortal from "@/ModalPortals/ModalPortal";
+import type { ModuleData, SkillData } from "@/InterfacesAndTypes/Interfaces";
 import { useState } from "react";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 
-import {
-  moduleSpecificProgress,
-  calculateOverallProgress,
-} from "@/utility_functions/calculateProgress";
 
-interface SampleRoadmapModalProps {
-  skillTitle: string;
-  skillProgress: Number;
-  modules: ModuleData[];
+
+interface ProgressModalProps{
+  skill: SkillData;
   setShowProgressModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProgressModal = ({
-  skillTitle,
-  skillProgress,
-  modules,
+  skill,
   setShowProgressModal,
-}: SampleRoadmapModalProps) => {
+}: ProgressModalProps) => {
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center ">
@@ -32,23 +25,23 @@ const ProgressModal = ({
           {/* Modal Header */}
           <div className="flex flex-row items-center justify-between border-b-2 border-slate-500 pb-3">
             <h2 className="text-lg font-semibold mb-2 text-gray-200">
-              Progress Review: <span className="italic">{skillTitle}</span>
+              Progress Review: <span className="italic">{skill.title}</span>
             </h2>
             <div className="flex items-center justify-end w-[40%] dark:text-white mr-5">
               <div className="mr-3 w-full bg-gray-200 rounded-full h-2.5 border-[0.5px] dark:bg-gray-800 dark:border-slate-500 dark:text-white">
                 <div
                   className="bg-yellow-500 h-2.5 rounded-full"
-                  style={{ width: `${skillProgress}%` }}
+                  style={{ width: `${skill.progress}%` }}
                 ></div>
               </div>
-              <p>{`${skillProgress}`}%</p>
+              <p>{`${skill.progress}`}%</p>
             </div>
           </div>
 
           {/* Modal Content Area*/}
           <div className="overflow-y-auto h-[75%] mt-6 custom-scrollbar  pr-2">
             <div className="space-y-3">
-              {modules.map((module, idx) => {
+              {skill.modules.map((module, idx) => {
                 const [open, setOpen] = useState(false);
                 return (
                   <div key={idx} className="border border-gray-600 rounded-md">

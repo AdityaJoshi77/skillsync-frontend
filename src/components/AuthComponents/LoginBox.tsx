@@ -1,7 +1,7 @@
 "use client";
 
 import api from "@/lib/axios";
-import {loginFunction} from '@/utility_functions/auth_functions'
+import { loginFunction } from "@/utility_functions/auth_functions";
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { useState } from "react";
@@ -19,7 +19,7 @@ export default function LoginBox({
   const [showPassword, setShowPassword] = useState<Boolean>(false);
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const [error, setError] = useState("");
@@ -33,12 +33,13 @@ export default function LoginBox({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    console.log(formData.email);
 
     try {
       const apiResponse = await loginFunction(formData);
       console.log("Login Successful : ", apiResponse.data);
-      router.push('/dashboard');
+      console.log("I am in the login component ysyyyyyyyy");
+      console.log("Logging form data on the login page", apiResponse.data);
+      router.push("/dashboard");
     } catch (error: any) {
       console.log(error);
       const msg = error.response?.data?.msg || "Login failed";
@@ -50,7 +51,9 @@ export default function LoginBox({
     <div className="relative h-full w-full flex items-center justify-center bg-gray-800">
       {/* Top-right logo */}
       <div className="absolute top-4 right-4">
-        <p className="text-2xl font-semibold italic cursor-default text-slate-200">SkillSync</p>
+        <p className="text-2xl font-semibold italic cursor-default text-slate-200">
+          SkillSync
+        </p>
       </div>
 
       {/* Login Box */}
@@ -59,9 +62,7 @@ export default function LoginBox({
           Log in to your account
         </h2>
 
-        <form 
-            onSubmit={handleSubmit}
-            className="flex flex-col space-y-6">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
           <label htmlFor="email-input" className="mb-1 text-sm text-slate-200">
             Email
           </label>
@@ -74,7 +75,10 @@ export default function LoginBox({
             onChange={handleChange}
           />
 
-          <label htmlFor="password-input" className="mb-1 text-sm text-slate-200">
+          <label
+            htmlFor="password-input"
+            className="mb-1 text-sm text-slate-200"
+          >
             Password
           </label>
           <div className="relative w-full">
@@ -94,10 +98,12 @@ export default function LoginBox({
               {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
             </button>
           </div>
-        
+
           {/* Error Message */}
           {error && (
-            <p className="text-sm text-red-500 text-center -mt-4">Error : {error}</p>
+            <p className="text-sm text-red-500 text-center -mt-4">
+              Error : {error}
+            </p>
           )}
 
           <button
