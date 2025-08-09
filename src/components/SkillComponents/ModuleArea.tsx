@@ -12,12 +12,14 @@ import { ProgressBar } from "../UtilityComponents/ProgressBar";
 
 interface ModuleAreaProps {
   module: ModuleData;
+  handleShowLearningArea: (SubModule: SubModuleData, setVal: boolean) => void;
   updateModule: (Mod: ModuleData, subId: string, updation: string) => void;
   setOpenModuleIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const ModuleArea = ({
   module,
+  handleShowLearningArea,
   updateModule,
   setOpenModuleIndex,
 }: ModuleAreaProps) => {
@@ -46,11 +48,11 @@ export const ModuleArea = ({
   };
 
   return (
-    <main className="h-[88%]">
+    <main className="h-[88%] w-full">
       {/* Title area : back button, module title, progress %*/}
       <div className="flex flex-row items-center justify-between h-[15%]">
         <button
-          className="flex items-center justify-between gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-full cursor-pointer border-[0.2px] border-slate-400 px-4 py-[0.5px] "
+          className="flex items-center justify-between gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-full cursor-pointer border-[0.2px] border-slate-400 px-4 py-1 "
           onClick={() => setOpenModuleIndex(-1)}
         >
           <FaArrowLeftLong size={10} /> Back
@@ -69,14 +71,15 @@ export const ModuleArea = ({
         {module.submodules.map((sub, subIdx) => (
           <div
             key={subIdx}
-            className="flex items-center justify-between px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white border-[0.1px] border-gray-600"
+            className="flex items-center justify-between px-4 py-2 rounded-md bg-gray-700 text-white border-[0.1px] border-gray-600"
           >
             <span className="text-sm font-medium w-[40%] ">{sub.title}</span>
-            <div className="flex items-center gap-4 w-[30%]">
-              <FaRegStickyNote className="text-xl text-yellow-300 hover:text-white cursor-pointer" />
-              <MdOutlineArticle className="text-xl text-green-300 hover:text-white cursor-pointer" />
-              <FaYoutube className="text-xl text-red-500 hover:text-red-600 cursor-pointer" />
-            </div>
+            <button
+              className="flex items-center justify-between gap-2 hover:bg-gray-300 hover:text-black bg-gray-800  text-gray-200 text-sm rounded-full cursor-pointer border-[0.2px] border-slate-400 px-4 py-1 "
+              onClick={() => handleShowLearningArea(sub, true)}
+            >
+              Open
+            </button>
             <input
               type="checkbox"
               checked={sub.status === "Completed"}

@@ -1,39 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import type { SkillData, ModuleData } from "@/InterfacesAndTypes/Interfaces";
+import type { SkillData, ModuleData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
 import { ProgressBar } from "../UtilityComponents/ProgressBar";
 import { ModuleArea } from "./ModuleArea";
 import api from "@/lib/axios";
 
 interface SkillPageRoadmapProps {
   skill_from_SkillPage: SkillData;
+  handleShowLearningArea: (SubModule: SubModuleData, setVal: boolean) => void;
 }
 
-// backend call to recount progress value on submodule tick/untick
-const updateSkillProgress = async (
-  skillId: string,
-  moduleId: string,
-  subModuleId: string,
-  updation: string
-) => {
-  try {
-    const res = await api.put(`/skill/${skillId}`, {
-      moduleId,
-      subModuleId,
-      updation,
-    });
-    console.log("Skill Values Recalculated Successfully", res.data);
-  } catch (error) {
-    console.error("Skill Recalculation Failed", error);
-  }
-};
-
-
 // COMPONENT
-const SkillPageRoadmap = ({ skill_from_SkillPage }: SkillPageRoadmapProps) => {
+const SkillPageRoadmap = ({ skill_from_SkillPage, handleShowLearningArea }: SkillPageRoadmapProps) => {
   const [skill, setSkill] = useState<SkillData>(skill_from_SkillPage);
   const [openModuleIndex, setOpenModuleIndex] = useState<number>(-1);
+
+  // backend call to recount progress value on submodule tick/untick
+  const updateSkillProgress = async (
+    skillId: string,
+    moduleId: string,
+    subModuleId: string,
+    updation: string,
+    prevSkillState: SkillData
+  ) => {
+    try {
+      const res = await api.put(`/skill/${skillId}`, {
+        moduleId,
+        subModuleId,
+        updation,
+      });
+      console.log("Skill Values Recalculated Successfully", res.data);
+    } catch (error) {
+      console.error("Skill Recalculation Failed", error);
+      // If Backend Updation fails, revert to previous state of skill
+      setSkill(prevSkillState);
+    }
+  };
 
   const updateModule = (
     updatedModule: ModuleData,
@@ -63,14 +66,15 @@ const SkillPageRoadmap = ({ skill_from_SkillPage }: SkillPageRoadmapProps) => {
       updatedSkill._id,
       updatedModule._id,
       subModuleId,
-      updation
+      updation,
+      skill_from_SkillPage
     );
   };
 
   return (
-    <section className="bg-gray-800 rounded-xl shadow-lg p-6 w-2/5 h-9/10 mb-2 border-[0.2] border-slate-400 overflow-y-auto custom-scrollbar">
+    <section className="flex flex-col items-center justify-between bg-gray-800 rounded-xl shadow-lg p-6 w-2/5 h-full border-[0.2] border-slate-400 overflow-y-auto custom-scrollbar">
       {/* Header */}
-      <div className="flex flex-row items-center justify-between border-b-2 border-slate-500 pb-3 mt-4">
+      <div className="flex flex-row items-center justify-between w-full border-b-2 border-slate-500 pb-3 mt-4 ">
         <h2 className="text-xl font-semibold text-gray-200">{skill.title}</h2>
         <div className="flex items-center justify-end w-[60%] text-white">
           <ProgressBar
@@ -82,7 +86,7 @@ const SkillPageRoadmap = ({ skill_from_SkillPage }: SkillPageRoadmapProps) => {
 
       {/* Modules */}
       {openModuleIndex === -1 ? (
-        <div className="space-y-5 mt-8 h-4/5 overflow-y-auto custom-scrollbar">
+        <div className="w-full space-y-5 mt-8 h-4/5 overflow-y-auto custom-scrollbar">
           {skill.modules.map((module, idx) => {
             return (
               <div key={idx} className="border border-gray-600 rounded-md">
@@ -106,6 +110,7 @@ const SkillPageRoadmap = ({ skill_from_SkillPage }: SkillPageRoadmapProps) => {
         // SubModules
         <ModuleArea
           module={skill.modules[openModuleIndex]}
+          handleShowLearningArea = {handleShowLearningArea}
           updateModule={updateModule}
           setOpenModuleIndex={setOpenModuleIndex}
         />

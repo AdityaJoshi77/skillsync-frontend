@@ -2,10 +2,10 @@
 
 import api from "@/lib/axios";
 import SkillPageRoadmap from "@/components/SkillComponents/SkillPageRoadmap";
-import type { UserData, SkillData } from "@/InterfacesAndTypes/Interfaces";
+import { LearningArea } from "@/components/SkillComponents/LearningArea";
+import type { UserData, SkillData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-
 
 export default function SkillPage() {
   const router = useRouter();
@@ -15,6 +15,8 @@ export default function SkillPage() {
   const [skill, setSkill] = useState<SkillData>();
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [skillLoading, setSkillLoading] = useState<boolean>(false);
+  const [showLearningArea, setShowLearningArea] = useState<boolean>(false);
+  const [openSubModule, setOpenSubModule] = useState<SubModuleData | null>(null);
 
   // periodic check to ensure session validity
   useEffect(() => {
@@ -52,11 +54,16 @@ export default function SkillPage() {
     fetchUserandSkill();
   }, []);
 
+  const handleShowLearningArea = (sub: SubModuleData | null, set: boolean) => {
+    setOpenSubModule(sub);
+    setShowLearningArea(set);
+  }
+
   const getSkill = async (skillId: string) => {
     try {
       setSkillLoading(true);
       const res = await api.get(`/skill/${skillId}`);
-      console.log('Skill Data : ', res.data);
+      console.log("Skill Data : ", res.data);
       setSkill(res.data);
     } catch (error) {
       console.error("Error Fetching Skill : ", error);
@@ -68,8 +75,15 @@ export default function SkillPage() {
   return (
     <div className=" flex flex-row items-baseline-last justify-between h-screen bg-gray-800">
       {skill ? (
-        <SkillPageRoadmap skill_from_SkillPage={skill} />
+        <div className=" flex flex-row justify-between h-screen w-full">
+          <SkillPageRoadmap skill_from_SkillPage={skill} handleShowLearningArea = {handleShowLearningArea}/>
+          {/* Right: Learning Area Stub */}
+          {
+            openSubModule && <LearningArea SubModule = {openSubModule!} handleShowLearningArea = {handleShowLearningArea}/>
+          }
+        </div>
       ) : (
+        // Add the learning area stub div here :
         <div className="text-black">Loading skill data...</div>
       )}
     </div>
