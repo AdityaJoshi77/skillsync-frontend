@@ -1,11 +1,13 @@
 export interface NoteData {
   _id: string;
+  contentId: string;
   title: string;
   content: string;
 }
 
 export interface ArticleData{
   _id: string;
+  contentId: string;
   title: string;
   link: string;
   summary: string;
@@ -20,15 +22,22 @@ export interface ContentData{
 
 export interface SubModuleData {
   _id:string;
+  skillId: string;
+  moduleId: string;
+  skillName: string;
+  moduleName: string;
   title: string;
   type: "Learning" | "Practice" | "Project";
   content: ContentData | null;
+  contentId: string;
   status: string;
 }
 
 export interface ModuleData {
   _id:string;
+  skillId: string;
   title: string;
+  skillName: string;
   status: string;
   progress: number;
   submodules: SubModuleData[];
