@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { SkillData, ModuleData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
+import type {
+  SkillData,
+  ModuleData,
+  SubModuleData,
+} from "@/InterfacesAndTypes/Interfaces";
 import { ProgressBar } from "../UtilityComponents/ProgressBar";
 import { ModuleArea } from "./ModuleArea";
 import api from "@/lib/axios";
@@ -12,7 +16,10 @@ interface SkillPageRoadmapProps {
 }
 
 // COMPONENT
-const SkillPageRoadmap = ({ skill_from_SkillPage, handleShowLearningArea }: SkillPageRoadmapProps) => {
+const SkillPageRoadmap = ({
+  skill_from_SkillPage,
+  handleShowLearningArea,
+}: SkillPageRoadmapProps) => {
   const [skill, setSkill] = useState<SkillData>(skill_from_SkillPage);
   const [openModuleIndex, setOpenModuleIndex] = useState<number>(-1);
 
@@ -94,8 +101,8 @@ const SkillPageRoadmap = ({ skill_from_SkillPage, handleShowLearningArea }: Skil
                   onClick={() => setOpenModuleIndex(idx)}
                   className="w-full flex justify-between items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium cursor-pointer overflow-y-auto"
                 >
-                  <span>{module.title}</span>
-                  <div className="flex items-center justify-end gap-3 w-1/2">
+                  <span className="w-4/5 text-start">{module.title}</span>
+                  <div className="flex items-center justify-end w-1/2 -mr-3">
                     <ProgressBar
                       progressPercent={module.progress}
                       showProgressPercent={true}
@@ -110,7 +117,7 @@ const SkillPageRoadmap = ({ skill_from_SkillPage, handleShowLearningArea }: Skil
         // SubModules
         <ModuleArea
           module={skill.modules[openModuleIndex]}
-          handleShowLearningArea = {handleShowLearningArea}
+          handleShowLearningArea={handleShowLearningArea}
           updateModule={updateModule}
           setOpenModuleIndex={setOpenModuleIndex}
         />

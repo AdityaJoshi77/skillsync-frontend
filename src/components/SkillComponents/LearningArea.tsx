@@ -6,6 +6,20 @@ import { FaYoutube } from "react-icons/fa6";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { GiBrain } from "react-icons/gi";
 import { SubModuleData } from "@/InterfacesAndTypes/Interfaces";
+import { contentButtonItems } from "./LearningAreaContentButtons";
+import { useState } from "react";
+
+import type {
+  ArticleData,
+  NoteData,
+  ContentData,
+} from "@/InterfacesAndTypes/Interfaces";
+
+// DEV:
+import { dummySubModule } from "@/dummydata/dummyContent";
+import { LearningArea_Videos } from "./LearningArea_Video";
+import { LearningArea_Articles } from "./LearningArea_Articles";
+import { LearningArea_Notes } from "./LearningArea_Notes";
 
 interface LearningAreaProps {
   SubModule: SubModuleData;
@@ -19,12 +33,43 @@ export const LearningArea = ({
   SubModule,
   handleShowLearningArea,
 }: LearningAreaProps) => {
+  const [selectedContentIndex, setSelectedContentIndex] = useState<number>(0);
+  let contentExists: boolean = false;
+  const selectedContent = SubModule.content!; //dummySubModule.content; //
+
+  console.log('Data of the Current SubModule : ', SubModule);
+
+  const renderContent = () => {
+    if (selectedContentIndex === 0) {
+      // Articles
+      if (selectedContent?.articles?.length) {
+        contentExists = true;
+        return selectedContent.articles?.map((a: ArticleData, index: number) => (
+          <LearningArea_Articles article={a} key={index} />
+        ));
+      } else {
+        contentExists = false;
+        return <p className="text-white">No articles found.</p>;
+      }
+    } else if (selectedContentIndex === 1) {
+      // Videos
+      if (selectedContent?.youtubeLinks?.length) {
+        contentExists = true;
+        return <LearningArea_Videos links={selectedContent.youtubeLinks} />;
+      } else {
+        contentExists = false;
+        return <p className="text-white">No videos found.</p>;
+      }
+    } else if (selectedContentIndex === 2) {
+      // Notes
+      return <LearningArea_Notes notes={selectedContent.notes} />;
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-between w-3/5 p-4 border-[0.2] border-slate-400 rounded-lg overflow-y-auto bg-gray-800 text-white">
-      
       {/* Header */}
       <div className="flex flex-row items-center justify-between w-full border-b-2 border-slate-500 pb-3 mt-6">
-
         {/* Back Button */}
         <button
           className="flex items-center justify-between gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-gray-100 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-4 py-1 "
@@ -40,25 +85,46 @@ export const LearningArea = ({
 
         {/* Content Buttons */}
         <div className="flex flex-row items-center justify-evenly gap-2">
-          <button className="flex items-center justify-evenly gap-2 bg-gray-800 hover:bg-gray-700 text-gray-100 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-3 py-1">
-            <span className="text-yellow-300"><FaRegStickyNote size={15} /></span> Notes
-          </button>
-          <button className="flex items-center justify-between gap-2 bg-gray-800 hover:bg-gray-700 text-gray-100 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-3 py-1">
-            <span className="text-green-500"><MdOutlineArticle size={15}/></span> Articles
-          </button>
-          <button className="flex items-center justify-between gap-2 bg-gray-800 hover:bg-gray-700 text-gray-100 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-3 py-1">
-            <span className="text-red-400"><FaYoutube size={15} /></span> Video
-          </button>
-          <button className="flex items-center justify-between gap-2 bg-gray-800 hover:bg-gray-700 text-gray-100 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-3 py-1">
-             <span className="text-pink-400"><GiBrain size={15} /></span> AI Summary
-          </button>
+          {contentButtonItems.map((content, index) => {
+
+            return index !== 2 || (selectedContent.articles.length || selectedContent.youtubeLinks.length) ? (
+              <button
+                key={index}
+                className={`flex items-center justify-between gap-2 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-3 py-1 ${
+                  index === selectedContentIndex
+                    ? "bg-gray-200 text-black"
+                    : " bg-gray-800 hover:bg-gray-700 text-white"
+                }`}
+                onClick={() => setSelectedContentIndex(index)}
+              >
+                <span
+                  className={
+                    index === selectedContentIndex
+                      ? content.iconColorOnSelect
+                      : content.iconColor
+                  }
+                >
+                  <content.icon size={15} />
+                </span>{" "}
+                {content.buttonName}
+              </button>
+            ) : (
+              null
+            );
+
+
+          })}
         </div>
       </div>
 
-      <div className="h-[85%] w-full bg-gray-900 rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold mb-4">Learning Area</h2>
-        <p>This is where the learning content will be displayed.</p>
-        <p>Depending upon the content button selected.</p>
+      <div className=" flex flex-col items-center justify-center gap-2 h-[85%] w-full bg-gray-900 rounded-lg shadow p-6 overflow-y-auto custom-scrollbar">
+        {renderContent()}
+
+        {selectedContentIndex !== 2 && !contentExists && (
+          <button className="bg-gray-200 hover:bg-gray-100 px-4 py-1 rounded-full text-black cursor-pointer text-sm ">
+            {`Generate ${contentButtonItems[selectedContentIndex].buttonName}`}
+          </button>
+        )}
       </div>
     </div>
   );

@@ -73,19 +73,21 @@ export const ModuleArea = ({
             key={subIdx}
             className="flex items-center justify-between px-4 py-2 rounded-md bg-gray-700 text-white border-[0.1px] border-gray-600"
           >
-            <span className="text-sm font-medium w-[40%] ">{sub.title}</span>
-            <button
-              className="flex items-center justify-between gap-2 hover:bg-gray-300 hover:text-black bg-gray-800  text-gray-200 text-sm rounded-full cursor-pointer border-[0.2px] border-slate-400 px-4 py-1 "
-              onClick={() => handleShowLearningArea(sub, true)}
-            >
-              Open
-            </button>
-            <input
-              type="checkbox"
-              checked={sub.status === "Completed"}
-              onChange={() => handleTick(subIdx)}
-              className={`w-3.5 h-3.5 cursor-pointer  accent-yellow-300`}
-            />
+            <span className="text-sm font-medium w-3/5 ">{sub.title}</span>
+            <div className="flex items-center justify-between w-1/4">
+              <button
+                className="flex items-center justify-between gap-2 hover:bg-gray-300 hover:text-black bg-gray-800  text-gray-200 text-sm rounded-full cursor-pointer border-[0.2px] border-slate-400 px-4 py-1 "
+                onClick={() => handleShowLearningArea(sub, true)}
+              >
+                Open
+              </button>
+              <input
+                type="checkbox"
+                checked={sub.status === "Completed"}
+                onChange={() => handleTick(subIdx)}
+                className={`w-3.5 h-3.5 cursor-pointer  accent-yellow-300`}
+              />
+            </div>
           </div>
         ))}
       </div>

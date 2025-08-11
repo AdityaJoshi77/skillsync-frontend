@@ -1,19 +1,28 @@
-export interface noteData {
-  _id: String;
-  title: String;
-  content: String;
+export interface NoteData {
+  _id: string;
+  title: string;
+  content: string;
+}
+
+export interface ArticleData{
+  _id: string;
+  title: string;
+  link: string;
+  summary: string;
+}
+
+export interface ContentData{
+  _id: string;
+  youtubeLinks: string[];
+  articles:ArticleData[];
+  notes: NoteData[];
 }
 
 export interface SubModuleData {
   _id:string;
   title: string;
   type: "Learning" | "Practice" | "Project";
-  content: {
-    youtubeLinks: String[];
-    articleLinks: String[];
-    aiSummary: String;
-  };
-  notes: noteData[];
+  content: ContentData | null;
   status: string;
 }
 
@@ -42,7 +51,7 @@ export interface LoginData {
 export interface SignUpData {
   name: string;
   email: string;
-  password: String;
+  password: string;
 }
 
 export interface SkillMetaData {
