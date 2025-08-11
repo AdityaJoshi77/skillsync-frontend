@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { NoteData } from "@/InterfacesAndTypes/Interfaces";
+import type { NoteData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
 import {
   FaPlus,
   FaBold,
@@ -17,10 +17,15 @@ import {
 import ReactMarkdown from "react-markdown";
 
 interface LearningArea_NotesProps {
+  contentId: string;
+  skillName: string;
+  moduleName: string;
+  submoduleName: string;
   notes: NoteData[];
+  setCurrentSubModule: React.Dispatch<React.SetStateAction<SubModuleData>>
 }
 
-export const LearningArea_Notes = ({ notes }: LearningArea_NotesProps) => {
+export const LearningArea_Notes = ({ contentId, skillName, moduleName, submoduleName, notes,setCurrentSubModule }: LearningArea_NotesProps) => {
   const [savedNotes, setSavedNotes] = useState<NoteData[]>(notes);
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -49,6 +54,7 @@ export const LearningArea_Notes = ({ notes }: LearningArea_NotesProps) => {
     const noteWithId = {
       ...newNote,
       _id: Date.now().toString(),
+      contentId,
     };
 
     setSavedNotes((prev) => [...prev, noteWithId]);

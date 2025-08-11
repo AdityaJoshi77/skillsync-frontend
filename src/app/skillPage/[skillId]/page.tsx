@@ -2,7 +2,7 @@
 
 import api from "@/lib/axios";
 import SkillPageRoadmap from "@/components/SkillComponents/SkillPageRoadmap";
-import { LearningArea } from "@/components/SkillComponents/LearningArea";
+import LearningArea from "@/components/SkillComponents/LearningArea";
 import type {
   UserData,
   SkillData,

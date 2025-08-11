@@ -6,18 +6,18 @@ import { MdOutlineArticle } from "react-icons/md";
 import { FaYoutube } from "react-icons/fa6";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { GiBrain } from "react-icons/gi";
-import { SubModuleData } from "@/InterfacesAndTypes/Interfaces";
 import { contentButtonItems } from "./LearningAreaContentButtons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type {
   ArticleData,
   NoteData,
+  SubModuleData,
   ContentData,
 } from "@/InterfacesAndTypes/Interfaces";
 
-import { LearningArea_Videos } from "./LearningArea_Video";
 import { LearningArea_Articles } from "./LearningArea_Articles";
+import { LearningArea_Videos } from "./LearningArea_Video";
 import { LearningArea_Notes } from "./LearningArea_Notes";
 
 // DEV:
@@ -31,90 +31,61 @@ interface LearningAreaProps {
   ) => void;
 }
 
-export const LearningArea = ({
+const LearningArea = ({
   SubModule,
   handleShowLearningArea,
 }: LearningAreaProps) => {
   const [selectedContentIndex, setSelectedContentIndex] = useState<number>(0);
-  const [subModuleContent, setSubModuleContent] = useState<ContentData>(
-    SubModule.content!
-  );
-  const [contentExists, setContentExists] = useState<boolean>(false);
-  let useAI = false;
+  const [currentSubModule, setCurrentSubModule] =
+    useState<SubModuleData>(SubModule);
+  const [useAI, setUseAI] = useState<boolean>(false);
 
-  console.log("Data of the Current SubModule : ", SubModule);
+  useEffect(() => {
+    setCurrentSubModule(SubModule);
+  }, [SubModule]);
 
-  const renderContent = () => {
-    if (selectedContentIndex === 0) {
-      // Articles
-      if (subModuleContent?.articles?.length) {
-        if (!contentExists) setContentExists(true);
-        return subModuleContent.articles.map(
-          (a: ArticleData, index: number) => (
-            <LearningArea_Articles article={a} key={index} />
-          )
+  const selectedLearningArea = (selectedContentIndex: number) => {
+    switch (selectedContentIndex) {
+      case 0:
+        return (
+          <LearningArea_Articles
+            contentId={SubModule.contentId}
+            skillName={SubModule.skillName}
+            moduleName={SubModule.moduleName}
+            submoduleName={SubModule.title}
+            articles={currentSubModule.content?.articles!}
+            useAI={useAI}
+            setCurrentSubModule = {setCurrentSubModule}
+          />
         );
-      } else {
-        if (contentExists) setContentExists(false);
-        return <p className="text-white">No articles found.</p>;
-      }
-    } else if (selectedContentIndex === 1) {
-      // Videos
-      if (subModuleContent?.youtubeLinks?.length) {
-        if (!contentExists) setContentExists(true);
-        return <LearningArea_Videos links={subModuleContent.youtubeLinks} />;
-      } else {
-        if (contentExists) setContentExists(false);
-        return <p className="text-white">No videos found.</p>;
-      }
-    } else if (selectedContentIndex === 2) {
-      return <LearningArea_Notes notes={subModuleContent.notes} />;
-    }
-  };
 
-  const handleGenerateContent = async (
-    skillName: string,
-    moduleName: string,
-    submoduleName: string,
-    contentId: string,
-    useAI: boolean,
-    requiredContent: string
-  ) => {
-    try {
-      console.log("Fired handleGenerateContent");
+      case 1:
+        return (
+          <LearningArea_Videos
+            contentId={SubModule.contentId}
+            skillName={SubModule.skillName}
+            moduleName={SubModule.moduleName}
+            submoduleName={SubModule.title}
+            links={currentSubModule.content?.youtubeLinks!}
+            useAI={useAI}
+            setCurrentSubModule = {setCurrentSubModule}
+          />
+        );
 
-      // ✅ Corrected endpoint string
-      const endpoint = `/content/generate${requiredContent.toLowerCase()}`;
-      const response = await api.post(endpoint, {
-        skillName,
-        moduleName,
-        submoduleName,
-        contentId,
-        useAI,
-      });
+      case 2:
+        return (
+          <LearningArea_Notes
+            contentId={SubModule.contentId}
+            skillName={SubModule.skillName}
+            moduleName={SubModule.moduleName}
+            submoduleName={SubModule.title}
+            notes={currentSubModule.content?.notes!}
+            setCurrentSubModule = {setCurrentSubModule}
+          />
+        );
 
-      if (!response.data) {
-        throw new Error("No content generated");
-      }
-
-      console.log(`Generated ${requiredContent}: `, response.data);
-
-      // ✅ Use state so UI updates
-      setContentExists(true);
-
-      if (requiredContent.toLowerCase() === "videos") {
-        setSubModuleContent((prevState) => ({
-          ...prevState,
-          youtubeLinks: response.data,
-        }));
-      } else if (requiredContent.toLowerCase() === "articles") {
-        setSubModuleContent((prevState) => ({
-          ...prevState,
-          articles: response.data,
-        }));
-      }
-    } catch (error) {
-      console.error("Error in handleGenerateContent: ", error);
+      default:
+        return null; // in case index is invalid
     }
   };
 
@@ -138,15 +109,24 @@ export const LearningArea = ({
         {/* Content Buttons */}
         <div className="flex flex-row items-center justify-evenly gap-2">
           {contentButtonItems.map((content, index) => {
-            return index !== 2 ||
-              subModuleContent.articles.length ||
-              subModuleContent.youtubeLinks.length ? (
+            // For the notes button (index 2), check if either articles or youtubeLinks have content
+            if (
+              index === 2 &&
+              !(
+                currentSubModule.content?.articles?.length! > 0 ||
+                currentSubModule.content?.youtubeLinks?.length! > 0
+              )
+            ) {
+              return null; // don't render notes button if both are empty
+            }
+
+            return (
               <button
                 key={index}
                 className={`flex items-center justify-between gap-2 text-xs rounded-full cursor-pointer border-[0.2px] border-slate-400 px-3 py-1 ${
                   index === selectedContentIndex
                     ? "bg-gray-200 text-black"
-                    : " bg-gray-800 hover:bg-gray-700 text-white"
+                    : "bg-gray-800 hover:bg-gray-700 text-white"
                 }`}
                 onClick={() => setSelectedContentIndex(index)}
               >
@@ -161,32 +141,17 @@ export const LearningArea = ({
                 </span>{" "}
                 {content.buttonName}
               </button>
-            ) : null;
+            );
           })}
         </div>
       </div>
 
+      {/* Learning Area for the Selected Button */}
       <div className=" flex flex-col items-center justify-center gap-2 h-[85%] w-full bg-gray-900 rounded-lg shadow p-6 overflow-y-auto custom-scrollbar">
-        {renderContent()}
-
-        {selectedContentIndex !== 2 && !contentExists && (
-          <button
-            className="bg-gray-200 hover:bg-gray-100 px-4 py-1 rounded-full text-black cursor-pointer text-sm"
-            onClick={() =>
-              handleGenerateContent(
-                SubModule.skillName,
-                SubModule.moduleName,
-                SubModule.title,
-                SubModule.contentId,
-                useAI,
-                `${contentButtonItems[selectedContentIndex].buttonName}` // requiredContent
-              )
-            }
-          >
-            {`Generate ${contentButtonItems[selectedContentIndex].buttonName}`}
-          </button>
-        )}
+        {selectedLearningArea(selectedContentIndex)}
       </div>
     </div>
   );
 };
+
+export default LearningArea;
