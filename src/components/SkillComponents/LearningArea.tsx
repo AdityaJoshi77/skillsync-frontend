@@ -42,6 +42,7 @@ const LearningArea = ({
 
   useEffect(() => {
     setCurrentSubModule(SubModule);
+    setSelectedContentIndex(0);
   }, [SubModule]);
 
   const selectedLearningArea = (selectedContentIndex: number) => {
@@ -53,8 +54,7 @@ const LearningArea = ({
             skillName={SubModule.skillName}
             moduleName={SubModule.moduleName}
             submoduleName={SubModule.title}
-            articles={currentSubModule.content?.articles!}
-            useAI={useAI}
+            // articles={currentSubModule.content?.articles!}
             setCurrentSubModule = {setCurrentSubModule}
           />
         );
@@ -66,8 +66,7 @@ const LearningArea = ({
             skillName={SubModule.skillName}
             moduleName={SubModule.moduleName}
             submoduleName={SubModule.title}
-            links={currentSubModule.content?.youtubeLinks!}
-            useAI={useAI}
+            // youtubeLinks={currentSubModule.content?.youtubeLinks!}
             setCurrentSubModule = {setCurrentSubModule}
           />
         );

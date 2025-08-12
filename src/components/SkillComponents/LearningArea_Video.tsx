@@ -1,6 +1,9 @@
 "use client";
 
-import { SubModuleData } from "@/InterfacesAndTypes/Interfaces";
+import {
+  SubModuleData,
+  youtubeLinkData,
+} from "@/InterfacesAndTypes/Interfaces";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { FaYoutube } from "react-icons/fa6";
@@ -11,8 +14,7 @@ interface LearningArea_VideosProps {
   skillName: string;
   moduleName: string;
   submoduleName: string;
-  links: string[];
-  useAI: boolean;
+  // useAI: boolean;
   setCurrentSubModule: React.Dispatch<React.SetStateAction<SubModuleData>>;
 }
 
@@ -20,21 +22,31 @@ export const LearningArea_Videos = ({
   contentId,
   skillName,
   moduleName,
-  submoduleName,
-  links,
-  useAI,
+  submoduleName, // currently used to refresh the component as a side effect trigger.
   setCurrentSubModule,
 }: LearningArea_VideosProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [contentVideos, setContentVideos] = useState<string[]>(links);
+  const [contentVideos, setContentVideos] = useState<youtubeLinkData[]>([]);
   const [videoLoading, setVideoLoading] = useState<boolean>(false);
+  const [useAI, setUseAI] = useState<boolean>(false);
 
   useEffect(() => {
-    setVideoLoading(true);
-    setContentVideos(links);
-    setVideoLoading(false);
-  }, [links]);
+    const getPersistedArticles = async () => {
+      try {
+        setVideoLoading(true);
+        const persistedResponse = await api.get(`/content/getpersistedvideos/${contentId}`);
+        console.log('Persited Video Response', persistedResponse.data);
+        setContentVideos(persistedResponse.data);
+      } catch (error) {
+        console.log('Backend Call Failed');
+        console.error(error);
+      } finally {
+        setVideoLoading(false);
+      }
+    };
+    getPersistedArticles();
+  }, [submoduleName]);
 
   const handleGenerateContent = async (
     skillName: string,
@@ -47,7 +59,7 @@ export const LearningArea_Videos = ({
       setVideoLoading(true);
       console.log("Fired handleGenerateConten For Videos");
       const endpoint = `/content/generatevideos`;
-      const response = await api.post(endpoint, {
+      const contentGenerationResponse = await api.post(endpoint, {
         skillName,
         moduleName,
         submoduleName,
@@ -55,25 +67,31 @@ export const LearningArea_Videos = ({
         useAI,
       });
 
-      if (!response.data) {
+      if (!contentGenerationResponse.data) {
         throw new Error("No content generated");
       }
 
-      console.log("Generated Videos", response.data);
+      console.log(
+        "Generated Videos; saving in db...",
+        contentGenerationResponse.data
+      );
 
-      const freshVideos = response.data.data;
-      setContentVideos(freshVideos);
+      //  backend call for persisted data
+      const persistedResponse = await api.get(`/content/getpersistedvideos/${contentId}`);
+      setContentVideos(persistedResponse.data);
 
       setCurrentSubModule((prevState) => ({
         ...prevState,
         content: {
           ...prevState.content,
-          articles: prevState.content!.articles,
-          youtubeLinks: freshVideos ?? [], // fallback to empty array if undefined
-          _id: prevState.content!._id!, // keep this if _id is required
-          notes: prevState.content!.notes ?? [], // similarly for notes if needed
+          articles: prevState.content?.articles ?? [],
+          youtubeLinks: persistedResponse.data,
+          notes: prevState.content?.notes ?? [],
+          _id: prevState.content?._id ?? "",
+          userId: prevState.content?.userId ?? "", // ensure always a string
         },
       }));
+      
     } catch (error) {
       console.error("Error in handleGenerateContent: ", error);
     } finally {
@@ -98,7 +116,10 @@ export const LearningArea_Videos = ({
             <iframe
               width="100%"
               height="100%"
-              src={contentVideos[selectedIndex].replace("watch?v=", "embed/")}
+              src={contentVideos[selectedIndex].link.replace(
+                "watch?v=",
+                "embed/"
+              )}
               title={`YouTube video ${selectedIndex + 1}`}
               allowFullScreen
             />
@@ -106,7 +127,7 @@ export const LearningArea_Videos = ({
 
           {/* Video List */}
           <div
-            className="relative flex flex-col h-full gap-2 overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out"
+            className="relative flex flex-col h-full gap-2 pt-2 pr-2 overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out"
             style={{
               width: isHovered ? "15%" : "6%",
             }}
@@ -130,7 +151,7 @@ export const LearningArea_Videos = ({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-full w-full gap-2 bg-gray-900">
+        <div className="flex flex-col items-center justify-center h-full w-full gap-2">
           <p className="text-lg text-gray-300">No videos found</p>
           <button
             className="bg-gray-300 hover:bg-gray-100 px-4 py-1 rounded-full text-black cursor-pointer text-sm"
@@ -145,6 +166,13 @@ export const LearningArea_Videos = ({
             }
           >
             Generate Videos
+          </button>
+          <button
+            className={`rounded-full px-4 border-2 border-slate-400 mt-2 cursor-pointer
+          ${useAI ? "text-black bg-gray-300" : " bg-gray-800 text-gray-200"}`}
+            onClick={() => setUseAI(!useAI)}
+          >
+            {useAI ? "AI ACTIVE !" : "Ai Inactive"}
           </button>
         </div>
       )}

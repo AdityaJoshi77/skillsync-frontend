@@ -3,6 +3,14 @@ export interface NoteData {
   contentId: string;
   title: string;
   content: string;
+  userId: string;
+}
+
+export interface youtubeLinkData{
+  id: string;
+  title: string;
+  link: string;
+  userId: string;
 }
 
 export interface ArticleData{
@@ -11,13 +19,15 @@ export interface ArticleData{
   title: string;
   link: string;
   summary: string;
+  userId: string;
 }
 
 export interface ContentData{
   _id: string;
-  youtubeLinks: string[];
+  youtubeLinks: youtubeLinkData[];
   articles:ArticleData[];
   notes: NoteData[];
+  userId: string;
 }
 
 export interface SubModuleData {
