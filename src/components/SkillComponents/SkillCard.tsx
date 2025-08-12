@@ -19,6 +19,8 @@ interface NewSkillCardProps {
   useAI?: boolean;
   handleDeleteSkill: (skillId: string) => void;
   setSkillList: React.Dispatch<React.SetStateAction<SkillData[]>>;
+  isMenuOpen: boolean; // New prop to check if this card's menu is open
+  onToggleMenu: (skillId: string) => void; // New prop to toggle menu state
 }
 
 const SkillCard = ({
@@ -26,6 +28,8 @@ const SkillCard = ({
   handleDeleteSkill,
   useAI,
   setSkillList,
+  isMenuOpen,
+  onToggleMenu,
 }: NewSkillCardProps) => {
   const router = useRouter();
   const [showSampleRoadmapModal, setShowSampleRoadmapModal] = useState(false);
@@ -33,12 +37,9 @@ const SkillCard = ({
   const [loading, setLoading] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState<boolean>(false);
   const [generatingRoadmap, setGeneratingRoadmap] = useState<boolean>(false);
-  const [showMenu, setShowMenu] = useState<boolean>(false);
 
-  // New state for the animated progress value
   const [displayedProgress, setDisplayedProgress] = useState(0);
 
-  // Animation effect
   useEffect(() => {
     if (skill.progress > 0) {
       const timer = setTimeout(() => {
@@ -50,8 +51,8 @@ const SkillCard = ({
             currentProgress += 1;
             setDisplayedProgress(currentProgress);
           }
-        }, 10); // Adjust interval for animation speed (10ms is a good starting point)
-      }, 500); // Wait 500ms before starting animation
+        }, 10);
+      }, 500);
 
       return () => clearTimeout(timer);
     }
@@ -110,7 +111,7 @@ const SkillCard = ({
     >
       {/* Card Header */}
       <div className="flex items-start justify-between">
-        <h3 className="text-md font-bold text-slate-200 capitalize">
+        <h3 className="text-lg font-bold text-slate-200 capitalize">
           {skill.title}
         </h3>
 
@@ -119,21 +120,21 @@ const SkillCard = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setShowMenu((prev) => !prev);
+              onToggleMenu(skill._id);
             }}
             className="text-gray-400 hover:text-gray-200 cursor-pointer p-1 rounded-md hover:bg-gray-500 transition-colors"
           >
             <HiOutlineDotsVertical className="w-5 h-5" />
           </button>
 
-          {showMenu && (
+          {isMenuOpen && (
             <div className="absolute top-8 right-0 mt-2 w-36 bg-gray-800 border border-gray-600 rounded-md shadow-lg z-50">
               {skill.modules.length > 0 && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowProgressModal(true);
-                    setShowMenu(false);
+                    onToggleMenu(skill._id);
                   }}
                   className="cursor-pointer w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700 rounded-t-md"
                 >
@@ -144,7 +145,7 @@ const SkillCard = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteSkill(skill._id);
-                  setShowMenu(false);
+                  onToggleMenu(skill._id);
                 }}
                 className="cursor-pointer w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 rounded-b-md"
               >
@@ -157,7 +158,7 @@ const SkillCard = ({
 
       {/* Card Content */}
       <div className="mt-2">
-        {skill.modules.length ? (
+        {skill.modules.length > 0 ? (
           <div className="flex flex-row justify-between items-end w-full h-full cursor-default">
             {/* Left side: Stats */}
             <div className="flex flex-col items-start justify-end h-full">
@@ -170,7 +171,7 @@ const SkillCard = ({
               <div className="flex items-center space-x-2 text-gray-300">
                 <FaCheckCircle className="text-emerald-400" />
                 <span className="text-sm">
-                  Completed: {skill.completedSubModules}
+                  Completed Submodules: {skill.completedSubModules}
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
@@ -191,38 +192,43 @@ const SkillCard = ({
             </div>
 
             {/* Right side: Circular Progress Bar */}
-            <div className="w-20 h-20 font-semibold mr-3">
+            <div className="w-18 h-18 ">
               <CircularProgressbar
-                value={displayedProgress} // Use the new state variable here
+                value={displayedProgress}
                 text={`${displayedProgress}%`}
                 styles={buildStyles({
                   pathColor: "#FACC15",
                   trailColor: "#1F2937",
-                  textColor: "#E2E8F0",
-                  textSize: "1.4rem",
+                  textColor: "#ffffff",
+                  textSize: "1.46rem",
                   strokeLinecap: "round",
                 })}
               />
             </div>
           </div>
         ) : (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleGenerate();
-            }}
-            disabled={loading}
-            className="w-full px-3 py-2 text-sm bg-gray-300 text-gray-900 rounded-full hover:bg-gray-50 cursor-pointer font-semibold"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center animate-pulse">
-                Generating Roadmap...
-                <Spinner_Element />
-              </span>
-            ) : (
-              "Generate Roadmap"
-            )}
-          </button>
+          <div className="flex flex-col items-center justify-center gap-7 h-full">
+            <p className="italic text-gray-400 text-md w-3/5 text-center">
+              Generate Roadmap to begin learning
+            </p>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleGenerate();
+              }}
+              disabled={loading}
+              className="w-full px-3 py-2 text-sm bg-gray-300 text-gray-900 rounded-full hover:bg-gray-50 cursor-pointer font-semibold"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center animate-pulse">
+                  Generating Roadmap...
+                  <Spinner_Element />
+                </span>
+              ) : (
+                "Generate Roadmap"
+              )}
+            </button>
+          </div>
         )}
       </div>
 
