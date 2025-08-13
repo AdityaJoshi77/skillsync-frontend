@@ -2,7 +2,10 @@
 
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
-import { SkillCard, BlankSkillCard } from "@/components/SkillComponents/SkillCard";
+import {
+  SkillCard,
+  BlankSkillCard,
+} from "@/components/SkillComponents/SkillCard";
 import {
   Spinner_Element,
   Spinner_Window,
@@ -141,11 +144,20 @@ export default function DashboardPage() {
             Welcome Back {user?.name}
           </h1>
           <button
+            type="button"
+            onClick={() => setUseAI((prev) => !prev)}
+            className={`px-4 py-2 rounded-full border transition duration-100 cursor-pointer ${
+              useAI ? "bg-gray-300 text-black" : "bg-gray-800 text-white"
+            }`}
+          >
+            {useAI ? "AI active" : "AI not active"}
+          </button>
+          {/* <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-700 text-white rounded-lg cursor-pointer hover:bg-red-600"
           >
             Logout
-          </button>
+          </button> */}
         </div>
 
         {/* Task Creation Section */}
@@ -168,7 +180,7 @@ export default function DashboardPage() {
             />
 
             {/* use AI Toggle */}
-            <button
+            {/* <button
               type="button"
               onClick={() => setUseAI((prev) => !prev)}
               className={`px-4 py-2 rounded-full border transition duration-100 cursor-pointer ${
@@ -176,7 +188,7 @@ export default function DashboardPage() {
               }`}
             >
               {useAI ? "AI active" : "AI not active"}
-            </button>
+            </button> */}
 
             <button
               type="submit"

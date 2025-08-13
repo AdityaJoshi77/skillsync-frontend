@@ -87,15 +87,14 @@ export default function SkillPage() {
         <div className=" flex flex-row justify-between h-screen w-full">
           <SkillPageRoadmap
             skill_from_SkillPage={skill}
+            showLearningArea={showLearningArea}
             handleShowLearningArea={handleShowLearningArea}
           />
           {/* Right: Learning Area Stub */}
-          {openSubModule && (
-            <LearningArea
-              SubModule={openSubModule!}
-              handleShowLearningArea={handleShowLearningArea}
-            />
-          )}
+          <LearningArea
+            SubModule={openSubModule!}
+            handleShowLearningArea={handleShowLearningArea}
+          />
         </div>
       ) : (
         // Add the learning area stub div here :

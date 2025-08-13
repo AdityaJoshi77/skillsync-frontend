@@ -5,36 +5,31 @@ import type { ModuleData, SkillData } from "@/InterfacesAndTypes/Interfaces";
 import { useState } from "react";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
+import { ProgressBar } from "@/components/UtilityComponents/ProgressBar";
 
-
-
-interface ProgressModalProps{
+interface ProgressModalProps {
   skill: SkillData;
   setShowProgressModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProgressModal = ({
-  skill,
-  setShowProgressModal,
-}: ProgressModalProps) => {
+const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center ">
         <div className="bg-gray-800 rounded-xl shadow-lg p-6 w-[60%] h-[80%]">
-
           {/* Modal Header */}
           <div className="flex flex-row items-center justify-between border-b-2 border-slate-500 pb-3">
             <h2 className="text-lg font-semibold mb-2 text-gray-200">
               Progress Review: <span className="italic">{skill.title}</span>
             </h2>
-            <div className="flex items-center justify-end w-[40%] dark:text-white mr-5">
-              <div className="mr-3 w-full bg-gray-200 rounded-full h-2.5 border-[0.5px] dark:bg-gray-800 dark:border-slate-500 dark:text-white">
-                <div
-                  className="bg-yellow-500 h-2.5 rounded-full"
-                  style={{ width: `${skill.progress}%` }}
-                ></div>
+            <div className="flex items-center justify-end w-[60%] dark:text-white mr-5">
+              <div className="flex items-center justify-end w-full -mr-3">
+                <ProgressBar
+                  progressPercent={skill.progress}
+                  showProgressPercent={true}
+                  marginRight="mr-3"
+                />
               </div>
-              <p>{`${skill.progress}`}%</p>
             </div>
           </div>
 
@@ -45,7 +40,6 @@ const ProgressModal = ({
                 const [open, setOpen] = useState(false);
                 return (
                   <div key={idx} className="border border-gray-600 rounded-md">
-
                     {/* Module Accordion Button */}
                     <button
                       onClick={() => setOpen(!open)}
@@ -56,17 +50,13 @@ const ProgressModal = ({
 
                       {/* Module Progress Bar */}
                       <div className="flex flex-row items-center justify-end gap-3 w-3/5">
-                        <div className="w-[30%] mr-3 bg-gray-200 rounded-full h-2.5 border-[0.5px] dark:bg-gray-800 dark:border-slate-500">
-                          <div
-                            className="bg-yellow-500 h-2.5 rounded-full text-center"
-                            style={{
-                              width: `${module.progress}%`,
-                            }}
-                          ></div>
+                        <div className="flex items-center justify-end w-4/5 -mr-3">
+                          <ProgressBar
+                            progressPercent={module.progress}
+                            showProgressPercent={true}
+                            marginRight="mr-3"
+                          />
                         </div>
-
-                        {/* Module Progress Percentage */}
-                        <p>{module.progress}%</p>
 
                         {/* Module Open/Close DropDown Button */}
                         <span>
@@ -74,7 +64,7 @@ const ProgressModal = ({
                         </span>
                       </div>
                     </button>
-                    
+
                     {/* Module -> SubModules */}
                     {open && (
                       <ul className="px-6 pb-3 pt-1 list-none text-md space-y-1">
@@ -97,7 +87,7 @@ const ProgressModal = ({
               })}
             </div>
           </div>
-          
+
           {/* Close Button */}
           <div className="flex justify-end gap-4 mt-4 mr-2">
             <button

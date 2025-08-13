@@ -35,6 +35,7 @@ export const LearningArea_Articles = ({
         setContentArticles(persistedResponse.data);
         console.log('Backend call for persisted articles successful');
       } catch (error) {
+        console.log('Failure in LearningArticles_UseEffect');
         console.error(error);
       } finally {
         setArticleLoading(false);
@@ -52,7 +53,7 @@ export const LearningArea_Articles = ({
     try {
       setArticleLoading(true);
       console.log("Fired handleGenerateContent For Articles");
-      const endpoint = `/content/getpersistedarticles/${contentId}`;
+      const endpoint = `/content/generatearticles`;
       const contentGenerationResponse = await api.post(endpoint, {
         skillName,
         moduleName,
@@ -71,6 +72,7 @@ export const LearningArea_Articles = ({
       );
 
       // backend call for persisted data
+      // const persistedResponse = await api.get(`/content/getpersistedarticles/${contentId}`);
       const persistedResponse = await api.get(`/content/getpersistedarticles/${contentId}`);
       setContentArticles(persistedResponse.data);
 
@@ -88,7 +90,7 @@ export const LearningArea_Articles = ({
     } catch (error) {
       console.error("Error in handleGenerateContent: ", error);
     } finally {
-      // setArticleLoading(false);
+      setArticleLoading(false);
     }
   };
 

@@ -105,7 +105,7 @@ const SkillCard = ({
 
   return (
     <main
-      className={`relative flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200 ${
+      className={`relative overflow-hidden flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200 ${
         generatingRoadmap && "shimmer-bg"
       } `}
     >
@@ -200,7 +200,7 @@ const SkillCard = ({
                   pathColor: "#FACC15",
                   trailColor: "#1F2937",
                   textColor: "#ffffff",
-                  textSize: "1.46rem",
+                  textSize: "1.3rem",
                   strokeLinecap: "round",
                 })}
               />
@@ -257,3 +257,5 @@ const BlankSkillCard = () => {
 };
 
 export { SkillCard, BlankSkillCard };
+
+

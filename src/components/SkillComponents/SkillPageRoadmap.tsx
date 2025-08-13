@@ -12,12 +12,14 @@ import api from "@/lib/axios";
 
 interface SkillPageRoadmapProps {
   skill_from_SkillPage: SkillData;
+  showLearningArea:boolean;
   handleShowLearningArea: (SubModule: SubModuleData, setVal: boolean) => void;
 }
 
 // COMPONENT
 const SkillPageRoadmap = ({
   skill_from_SkillPage,
+  showLearningArea,
   handleShowLearningArea,
 }: SkillPageRoadmapProps) => {
   const [skill, setSkill] = useState<SkillData>(skill_from_SkillPage);
@@ -83,7 +85,7 @@ const SkillPageRoadmap = ({
   };
 
   return (
-    <section className="flex flex-col items-center justify-between bg-gray-800 rounded-xl shadow-lg p-6 w-2/5 h-full border-[0.2] border-slate-400 overflow-y-auto custom-scrollbar">
+    <section className={`flex flex-col items-center justify-between bg-gray-800 rounded-xl shadow-lg p-6  h-full border-[0.2] border-slate-400 overflow-y-auto custom-scrollbar ${showLearningArea ? 'w-2/5':'w-4/5'}`}>
       {/* Header */}
       <div className="flex flex-row items-center justify-between w-full border-b-2 border-slate-500 pb-3 mt-4 ">
         <h2 className="text-xl font-semibold text-gray-200">{skill.title}</h2>
@@ -91,6 +93,7 @@ const SkillPageRoadmap = ({
           <ProgressBar
             progressPercent={skill.progress}
             showProgressPercent={true}
+            marginRight = 'mr-3'
           />
         </div>
       </div>
@@ -106,10 +109,11 @@ const SkillPageRoadmap = ({
                   className="w-full flex justify-between items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium cursor-pointer overflow-y-auto"
                 >
                   <span className="w-4/5 text-start">{module.title}</span>
-                  <div className="flex items-center justify-end w-1/2 -mr-3">
+                  <div className="flex items-center justify-end w-3/5 -mr-3">
                     <ProgressBar
                       progressPercent={module.progress}
                       showProgressPercent={true}
+                      marginRight = 'mr-3'
                     />
                   </div>
                 </button>
