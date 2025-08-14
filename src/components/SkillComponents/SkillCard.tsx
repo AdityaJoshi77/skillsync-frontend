@@ -111,7 +111,7 @@ const SkillCard = ({
     >
       {/* Card Header */}
       <div className="flex items-start justify-between">
-        <h3 className="text-lg font-bold text-slate-200 capitalize">
+        <h3 className="text-md font-bold text-slate-200 capitalize">
           {skill.title}
         </h3>
 
@@ -208,7 +208,7 @@ const SkillCard = ({
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-7 h-full">
-            <p className="italic text-gray-400 text-md w-3/5 text-center">
+            <p className="italic text-gray-400 text-sm w-3/5 text-center">
               Generate Roadmap to begin learning
             </p>
             <button

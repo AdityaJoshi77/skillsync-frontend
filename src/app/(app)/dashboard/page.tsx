@@ -175,6 +175,7 @@ export default function DashboardPage() {
 
             <button
               type="submit"
+              disabled = {skillButttonLoading}
               className="flex items-center justify-between px-4 py-2 bg-gray-300 text-gray-900 rounded-full cursor-pointer hover:bg-gray-50"
             >
               {skillButttonLoading ? (
@@ -199,7 +200,7 @@ export default function DashboardPage() {
             Your Skills
           </h2>
 
-          {/* Code to show blank skill cards if the user has skills but haven't been fetched yet */}
+          {/* Code to show blank skill cards if the user has skills but haven't been fetched yet or skill creation prompt div if user has no skills */}
           {skillSetLoading ? (
             user?.skillMetaData?.length ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full w-full overflow-y-auto custom-scrollbar">
@@ -209,13 +210,13 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="flex items-center justify-center h-full w-full bg-gray-600 rounded-xl">
-                <p className="text-gray-400 italic text-center font-semibold text-lg">
+                <p className="text-gray-200 italic text-center font-semibold text-lg">
                   Create a new skill to begin learning
                 </p>
               </div>
             )
           ) : 
-          
+          // {/* Code to show skill cards if the user has skills or skill creation prompt div if the user has no skills yet */}
           skillList.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full w-full overflow-y-auto custom-scrollbar">
               {skillList.map((skill, index) => (
@@ -232,7 +233,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="flex items-center justify-center h-full w-full bg-gray-700 rounded-xl ">
-              <p className="text-gray-400 italic text-center font-semibold text-lg ">
+              <p className="text-gray-200 italic text-center font-semibold text-lg ">
                 Create a new skill to begin learning
               </p>
             </div>

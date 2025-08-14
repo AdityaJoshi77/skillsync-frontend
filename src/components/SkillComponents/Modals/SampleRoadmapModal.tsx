@@ -1,7 +1,7 @@
 "use client";
 
 import ModalPortal from "@/ModalPortals/ModalPortal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface SubModuleData {
   title: string;
@@ -29,9 +29,12 @@ const SampleRoadmapModal = ({
   setShowSampleRoadmapModal,
 }: SampleRoadmapModalProps) => {
 
-  // useEffect(() => {
-  //   console.log(previewData);
-  // },[]);
+  const [savingRoadmap, setSavingRoadmap] = useState<boolean>(false);
+
+  const handleClickOnSaveButton = () => {
+    setSavingRoadmap(true);
+    handleAcceptRoadmap();
+  }
 
   return (
     <ModalPortal>
@@ -59,15 +62,17 @@ const SampleRoadmapModal = ({
           <div className="flex justify-end gap-4 mt-6 mr-2">
             <button
               onClick={() => setShowSampleRoadmapModal(false)}
+              disabled = {savingRoadmap}
               className="px-3 py-1 text-sm rounded-md border-1 border-slate-300 bg-slate-300 hover:bg-slate-400 cursor-pointer"
             >
               Cancel
             </button>
             <button
-              onClick={handleAcceptRoadmap}
-              className="px-3 py-1 text-sm rounded-md border-1 border-slate-300 bg-green-800 text-white hover:bg-green-700 cursor-pointer"
+              onClick={handleClickOnSaveButton}
+              disabled = {savingRoadmap}
+              className={`px-3 py-1 text-sm rounded-md border-1 border-slate-300 bg-green-800 text-white hover:bg-green-700 cursor-pointer ${savingRoadmap && 'animate animate-pulse'}`}
             >
-              Accept
+              {savingRoadmap ? 'Saving Roadmap...' : 'Save Roadmap'}
             </button>
           </div>
         </div>
