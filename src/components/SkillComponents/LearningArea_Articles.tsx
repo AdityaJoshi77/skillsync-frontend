@@ -10,8 +10,6 @@ interface LearningArea_ArticlesProps {
   skillName: string;
   moduleName: string;
   submoduleName: string;
-  // articles: ArticleData[];
-  // useAI: boolean;
   setCurrentSubModule: React.Dispatch<React.SetStateAction<SubModuleData>>;
 }
 
@@ -31,7 +29,7 @@ export const LearningArea_Articles = ({
     const getPersistedArticles = async () => {
       try {
         setArticleLoading(true);
-        const persistedResponse = await api.get(`/content/getpersistedarticles/${contentId}`);
+        const persistedResponse = await api.get(`/content/getPersistedArticles/${contentId}`);
         setContentArticles(persistedResponse.data);
         console.log('Backend call for persisted articles successful');
       } catch (error) {
@@ -53,7 +51,7 @@ export const LearningArea_Articles = ({
     try {
       setArticleLoading(true);
       console.log("Fired handleGenerateContent For Articles");
-      const endpoint = `/content/generatearticles`;
+      const endpoint = `/content/generateArticles`;
       const contentGenerationResponse = await api.post(endpoint, {
         skillName,
         moduleName,
@@ -72,8 +70,7 @@ export const LearningArea_Articles = ({
       );
 
       // backend call for persisted data
-      // const persistedResponse = await api.get(`/content/getpersistedarticles/${contentId}`);
-      const persistedResponse = await api.get(`/content/getpersistedarticles/${contentId}`);
+      const persistedResponse = await api.get(`/content/getPersistedArticles/${contentId}`);
       setContentArticles(persistedResponse.data);
 
       setCurrentSubModule((prevState) => ({

@@ -58,7 +58,7 @@ export const LearningArea_Videos = ({
     try {
       setVideoLoading(true);
       console.log("Fired handleGenerateConten For Videos");
-      const endpoint = `/content/generatevideos`;
+      const endpoint = `/content/generateVideos`;
       const contentGenerationResponse = await api.post(endpoint, {
         skillName,
         moduleName,
@@ -77,7 +77,7 @@ export const LearningArea_Videos = ({
       );
 
       //  backend call for persisted data
-      const persistedResponse = await api.get(`/content/getpersistedvideos/${contentId}`);
+      const persistedResponse = await api.get(`/content/getPersistedVideos/${contentId}`);
       setContentVideos(persistedResponse.data);
 
       setCurrentSubModule((prevState) => ({

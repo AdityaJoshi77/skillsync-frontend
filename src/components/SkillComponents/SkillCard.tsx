@@ -105,9 +105,9 @@ const SkillCard = ({
 
   return (
     <main
-      className={`relative overflow-hidden flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200 ${
+      className={`relative overflow-hidden ${
         generatingRoadmap && "shimmer-bg"
-      } `}
+      } flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200  `}
     >
       {/* Card Header */}
       <div className="flex items-start justify-between">
@@ -257,5 +257,3 @@ const BlankSkillCard = () => {
 };
 
 export { SkillCard, BlankSkillCard };
-
-

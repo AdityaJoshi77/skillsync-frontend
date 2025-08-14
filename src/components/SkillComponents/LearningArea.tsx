@@ -79,6 +79,7 @@ const LearningArea = ({
             skillName={currentSubModule.skillName}
             moduleName={currentSubModule.moduleName}
             submoduleName={currentSubModule.title}
+            SubModule = {currentSubModule}
             notes={currentSubModule.content?.notes!}
             setCurrentSubModule={setCurrentSubModule as React.Dispatch<React.SetStateAction<SubModuleData>>}
           />

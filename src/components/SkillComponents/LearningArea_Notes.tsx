@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import type { NoteData, SubModuleData } from "@/InterfacesAndTypes/Interfaces";
+import { useEffect, useState } from "react";
+import {
+  UserData,
+  type NoteData,
+  type SubModuleData,
+} from "@/InterfacesAndTypes/Interfaces";
 import {
   FaPlus,
   FaBold,
@@ -15,21 +19,63 @@ import {
   FaHeading,
 } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+import api from "@/lib/axios";
 
 interface LearningArea_NotesProps {
   contentId: string;
   skillName: string;
   moduleName: string;
   submoduleName: string;
+  SubModule: SubModuleData;
   notes: NoteData[];
-  setCurrentSubModule: React.Dispatch<React.SetStateAction<SubModuleData>>
+  setCurrentSubModule: React.Dispatch<React.SetStateAction<SubModuleData>>;
 }
 
-export const LearningArea_Notes = ({ contentId, skillName, moduleName, submoduleName, notes,setCurrentSubModule }: LearningArea_NotesProps) => {
+export const LearningArea_Notes = ({
+  contentId,
+  skillName,
+  moduleName,
+  submoduleName,
+  SubModule,
+  notes,
+  setCurrentSubModule,
+}: LearningArea_NotesProps) => {
   const [savedNotes, setSavedNotes] = useState<NoteData[]>(notes);
   const [isCreating, setIsCreating] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [savingNote, setSavingNote] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
   const [newNote, setNewNote] = useState({ title: "", content: "" });
+  const [editNoteId, setEditNoteId] = useState<string | null>(null); // New state
+
+  useEffect(() => {
+    const getPersistedNotes = async () => {
+      try {
+        setNotesLoading(true);
+        const response = await api.get("/auth/me");
+        setUser(response.data);
+        const persistedResponse = await api.get(
+          `/content/getPersistedNotes/${contentId}`
+        );
+        setSavedNotes(persistedResponse.data);
+        console.log("Backend call for persisted notes successful");
+      } catch (error) {
+        console.log("Failure in LearningArea_Notes UseEffect");
+        console.error(error);
+      } finally {
+        setNotesLoading(false);
+      }
+    };
+    getPersistedNotes();
+  }, [submoduleName]);
+
+  // New function to handle editing a note
+  const handleEditNote = (note: NoteData) => {
+    setIsCreating(true);
+    setEditNoteId(note._id);
+    setNewNote({ title: note.title, content: note.content });
+  };
 
   const insertAtCursor = (syntax: string, placeholder: string) => {
     const textarea = document.getElementById(
@@ -48,19 +94,40 @@ export const LearningArea_Notes = ({ contentId, skillName, moduleName, submodule
     textarea.selectionEnd = start + syntax.length + placeholder.length;
   };
 
-  const handleSaveNote = () => {
-    if (!newNote.title.trim() || !newNote.content.trim()) return;
+  const handleSaveNote = async () => {
+    try {
+      setSavingNote(true);
+      if (!newNote.title.trim() || !newNote.content.trim()) return;
 
-    const noteWithId = {
-      ...newNote,
-      _id: Date.now().toString(),
-      contentId,
-    };
+      if (editNoteId) {
+        // Implement the logic to update an existing note
+        // You'll need a new backend endpoint for this
+        console.log("Updating existing note with ID:", editNoteId);
+      } else {
+        // Existing logic for creating a new note
+        const noteCreationResponse = await api.post("/content/createNote", {
+          title: newNote.title,
+          content: newNote.content,
+          userId: user?._id,
+          skillId: SubModule.skillId,
+          moduleId: SubModule.moduleId,
+          submoduleId: SubModule._id,
+          contentId,
+        });
 
-    setSavedNotes((prev) => [...prev, noteWithId]);
-    setNewNote({ title: "", content: "" });
-    setIsCreating(false);
-    setPreviewMode(false);
+        setSavedNotes((prev) => [...prev, noteCreationResponse.data]);
+      }
+
+      setNewNote({ title: "", content: "" });
+      setIsCreating(false);
+      setPreviewMode(false);
+      setEditNoteId(null); // Reset edit mode
+    } catch (error) {
+      console.log('Could not save the note');
+      console.error(error);
+    } finally {
+      setSavingNote(false);
+    }
   };
 
   return (
@@ -70,7 +137,11 @@ export const LearningArea_Notes = ({ contentId, skillName, moduleName, submodule
           {/* Saved Notes */}
           {savedNotes.length ? (
             savedNotes.map((n) => (
-              <div key={n._id} className="mb-4 p-3 bg-gray-700 rounded">
+              <div 
+                key={n._id} 
+                className="mb-4 p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors"
+                onClick={() => handleEditNote(n)} // Add onClick here
+              >
                 <h3 className="font-semibold text-white">{n.title}</h3>
                 <div className="prose prose-invert">
                   <ReactMarkdown>{n.content}</ReactMarkdown>
@@ -79,7 +150,7 @@ export const LearningArea_Notes = ({ contentId, skillName, moduleName, submodule
             ))
           ) : (
             <div className="flex items-center justify-center w-full h-full">
-                <p className="text-gray-400 text-center">No saved notes.</p>
+              <p className="text-gray-400 text-center">No saved notes.</p>
             </div>
           )}
 

@@ -67,7 +67,7 @@
     rgba(255, 255, 255, 0.2) 50%,
     transparent 100%
   );
-  animation: "shimmer 1.5s infinite";
+  animation: shimmer 1.5s infinite;
 }
 
 @keyframes gradient-shift {
