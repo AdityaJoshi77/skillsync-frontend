@@ -113,7 +113,7 @@ export const LearningArea_Articles = ({
                 href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-green-400 hover:underline"
+                className="font-bold text-yellow-400 hover:underline"
               >
                 {article.title}
               </a>

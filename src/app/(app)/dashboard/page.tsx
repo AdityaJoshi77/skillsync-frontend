@@ -141,7 +141,7 @@ export default function DashboardPage() {
       <div className="flex flex-col h-full max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-300">
-            Welcome Back {user?.name}
+            Welcome Back, {user?.name.split(" ")[0]}
           </h1>
           <button
             type="button"
@@ -152,12 +152,6 @@ export default function DashboardPage() {
           >
             {useAI ? "AI active" : "AI not active"}
           </button>
-          {/* <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-700 text-white rounded-lg cursor-pointer hover:bg-red-600"
-          >
-            Logout
-          </button> */}
         </div>
 
         {/* Task Creation Section */}
@@ -178,17 +172,6 @@ export default function DashboardPage() {
               onChange={(e) => setNewSkillTitle(e.target.value)}
               required
             />
-
-            {/* use AI Toggle */}
-            {/* <button
-              type="button"
-              onClick={() => setUseAI((prev) => !prev)}
-              className={`px-4 py-2 rounded-full border transition duration-100 cursor-pointer ${
-                useAI ? "bg-gray-300 text-black" : "bg-gray-800 text-white"
-              }`}
-            >
-              {useAI ? "AI active" : "AI not active"}
-            </button> */}
 
             <button
               type="submit"
@@ -215,31 +198,45 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold mb-4 text-gray-300">
             Your Skills
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full w-full overflow-y-auto custom-scrollbar">
-            {skillSetLoading ? (
-              user?.skillMetaData?.length ? (
-                user.skillMetaData.map((skill, index) => (
+
+          {/* Code to show blank skill cards if the user has skills but haven't been fetched yet */}
+          {skillSetLoading ? (
+            user?.skillMetaData?.length ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full w-full overflow-y-auto custom-scrollbar">
+                {user.skillMetaData.map((skill, index) => (
                   <BlankSkillCard key={index} />
-                ))
-              ) : (
-                <p className="text-gray-300">No skills to show</p>
-              )
-            ) : skillList.length ? (
-              skillList.map((skill, index) => (
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full w-full bg-gray-600 rounded-xl">
+                <p className="text-gray-400 italic text-center font-semibold text-lg">
+                  Create a new skill to begin learning
+                </p>
+              </div>
+            )
+          ) : 
+          
+          skillList.length ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full w-full overflow-y-auto custom-scrollbar">
+              {skillList.map((skill, index) => (
                 <SkillCard
                   key={skill._id}
                   skill={skill}
                   handleDeleteSkill={handleDeleteSkill}
                   useAI={useAI}
                   setSkillList={setSkillList}
-                  isMenuOpen={openMenuId === skill._id} // Pass the open state
-                  onToggleMenu={handleToggleMenu} // Pass the toggle function
+                  isMenuOpen={openMenuId === skill._id}
+                  onToggleMenu={handleToggleMenu}
                 />
-              ))
-            ) : (
-              <p className="text-gray-300"></p>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full w-full bg-gray-700 rounded-xl ">
+              <p className="text-gray-400 italic text-center font-semibold text-lg ">
+                Create a new skill to begin learning
+              </p>
+            </div>
+          )}
         </section>
       </div>
     </main>
