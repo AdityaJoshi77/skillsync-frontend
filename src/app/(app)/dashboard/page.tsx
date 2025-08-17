@@ -11,11 +11,7 @@ import {
   Spinner_Window,
 } from "@/components/UtilityComponents/Spinner";
 import { useRouter } from "next/navigation";
-import type {
-  ModuleData,
-  UserData,
-  SkillData,
-} from "@/InterfacesAndTypes/Interfaces";
+import type { UserData, SkillData } from "@/InterfacesAndTypes/Interfaces";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -39,7 +35,7 @@ export default function DashboardPage() {
       try {
         await api.get("/auth/me");
       } catch (err) {
-        console.log("Session expired. Redirecting...");
+        console.log("Session expired. Redirecting...", err);
         router.push("/");
       } finally {
         // setPageLoading(false);
@@ -47,7 +43,7 @@ export default function DashboardPage() {
     }, 60000); // check every 60 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [router]);
 
   // Fetch user and their skills
   useEffect(() => {
@@ -58,20 +54,20 @@ export default function DashboardPage() {
         console.log("User Data : ", res.data);
         if (!res.data) throw new Error("Unauthorized");
         setUser(res.data);
-        getUserSkills(res.data._id);
+        setPageLoading(false);
+
+        getUserSkills();
       } catch (err) {
         console.log(err);
         router.push("/");
-      } finally {
-        setPageLoading(false);
       }
     };
 
     fetchUserAndTasks();
-  }, []);
+  }, [router]);
 
   // Fetch skills
-  const getUserSkills = async (userId: string) => {
+  const getUserSkills = async () => {
     try {
       setSkillSetLoading(true);
       const res = await api.get("/skill");
@@ -100,9 +96,15 @@ export default function DashboardPage() {
       console.log(res.data);
       setSkillList((prev) => [...prev, res.data]);
       setNewSkillTitle("");
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || "Failed to create skill.";
-      setError(`ERROR : ${msg}`);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosErr = err as { response?: { data?: { message?: string } } };
+        const msg =
+          axiosErr.response?.data?.message || "Failed to create skill.";
+        setError(`${msg}`);
+      } else {
+        setError("ERROR : Failed to create skill.");
+      }
       setNewSkillTitle("");
       setTimeout(() => setError(null), 5000);
       console.error("Error creating skill:", err);
@@ -117,17 +119,7 @@ export default function DashboardPage() {
       await api.delete(`/skill/${skillId}`);
       setSkillList((prev) => prev.filter((skill) => skill._id !== skillId));
     } catch (error) {
-      console.log("Skill Deletion failed");
-    }
-  };
-
-  // Logout
-  const handleLogout = async () => {
-    try {
-      await api.get("/auth/logout");
-      router.push("/"); // Redirect to home
-    } catch (error) {
-      console.error("Logout failed:", error);
+      console.log("Skill Deletion failed", error);
     }
   };
 
@@ -135,6 +127,14 @@ export default function DashboardPage() {
   const handleToggleMenu = (skillId: string) => {
     setOpenMenuId(openMenuId === skillId ? null : skillId);
   };
+
+  if (pageLoading) {
+    return (
+      <div className="h-full w-full">
+        <Spinner_Window />
+      </div>
+    );
+  }
 
   return (
     <main className="h-screen bg-gray-800 p-6">
@@ -175,7 +175,7 @@ export default function DashboardPage() {
 
             <button
               type="submit"
-              disabled = {skillButttonLoading}
+              disabled={skillButttonLoading}
               className="flex items-center justify-between px-4 py-2 bg-gray-300 text-gray-900 rounded-full cursor-pointer hover:bg-gray-50"
             >
               {skillButttonLoading ? (
@@ -215,13 +215,12 @@ export default function DashboardPage() {
                 </p>
               </div>
             )
-          ) : 
-          // {/* Code to show skill cards if the user has skills or skill creation prompt div if the user has no skills yet */}
+          ) : // {/* Code to show skill cards if the user has skills or skill creation prompt div if the user has no skills yet */}
           skillList.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full w-full overflow-y-auto custom-scrollbar">
               {skillList.map((skill, index) => (
                 <SkillCard
-                  key={skill._id}
+                  key={index}
                   skill={skill}
                   handleDeleteSkill={handleDeleteSkill}
                   useAI={useAI}

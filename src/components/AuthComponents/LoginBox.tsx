@@ -1,6 +1,5 @@
 "use client";
 
-import api from "@/lib/axios";
 import { loginFunction } from "@/utility_functions/auth_functions";
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa6";
@@ -16,13 +15,13 @@ export default function LoginBox({
   loginOrSignup,
   setLoginOrSignup,
 }: LoginBoxProps) {
-  const [showPassword, setShowPassword] = useState<Boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>("");
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,10 +39,16 @@ export default function LoginBox({
       console.log("I am in the login component ysyyyyyyyy");
       console.log("Logging form data on the login page", apiResponse.data);
       router.push("/dashboard");
-    } catch (error: any) {
-      console.log(error);
-      const msg = error.response?.data?.msg || "Login failed";
-      setError(msg);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosErr = err as { response?: { data?: { message?: string } } };
+        const msg =
+          axiosErr.response?.data?.message;
+        setError(`${msg}`);
+      } else {
+        setError("Login Failed");
+      }
+      setTimeout(() => setError(null), 5000);
     }
   };
 

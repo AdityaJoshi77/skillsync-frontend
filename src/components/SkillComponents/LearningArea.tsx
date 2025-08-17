@@ -1,30 +1,17 @@
 "use client";
 
-import api from "@/lib/axios";
-import { FaRegStickyNote } from "react-icons/fa";
-import { MdOutlineArticle } from "react-icons/md";
-import { FaYoutube } from "react-icons/fa6";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { GiBrain } from "react-icons/gi";
 import { contentButtonItems } from "./LearningAreaContentButtons";
 import { useEffect, useState } from "react";
 
-import type {
-  ArticleData,
-  NoteData,
-  SubModuleData,
-  ContentData,
-} from "@/InterfacesAndTypes/Interfaces";
+import type { SubModuleData } from "@/InterfacesAndTypes/Interfaces";
 
 import { LearningArea_Articles } from "./LearningArea_Articles";
 import { LearningArea_Videos } from "./LearningArea_Video";
 import { LearningArea_Notes } from "./LearningArea_Notes";
 
-// DEV:
-import { dummySubModule } from "@/dummydata/dummyContent";
-
 interface LearningAreaProps {
-  SubModule: SubModuleData | null; // Allow SubModule to be null
+  SubModule: SubModuleData; // Allow SubModule to be null
   handleShowLearningArea: (
     SubModule: SubModuleData | null,
     setVal: boolean
@@ -37,8 +24,7 @@ const LearningArea = ({
 }: LearningAreaProps) => {
   const [selectedContentIndex, setSelectedContentIndex] = useState<number>(0);
   const [currentSubModule, setCurrentSubModule] =
-    useState<SubModuleData | null>(SubModule);
-  const [useAI, setUseAI] = useState<boolean>(false);
+    useState<SubModuleData>(SubModule);
 
   useEffect(() => {
     setCurrentSubModule(SubModule);
@@ -57,7 +43,11 @@ const LearningArea = ({
             skillName={currentSubModule.skillName}
             moduleName={currentSubModule.moduleName}
             submoduleName={currentSubModule.title}
-            setCurrentSubModule={setCurrentSubModule as React.Dispatch<React.SetStateAction<SubModuleData>>}
+            setCurrentSubModule={
+              setCurrentSubModule as React.Dispatch<
+                React.SetStateAction<SubModuleData>
+              >
+            }
           />
         );
 
@@ -68,7 +58,11 @@ const LearningArea = ({
             skillName={currentSubModule.skillName}
             moduleName={currentSubModule.moduleName}
             submoduleName={currentSubModule.title}
-            setCurrentSubModule={setCurrentSubModule as React.Dispatch<React.SetStateAction<SubModuleData>>}
+            setCurrentSubModule={
+              setCurrentSubModule as React.Dispatch<
+                React.SetStateAction<SubModuleData>
+              >
+            }
           />
         );
 
@@ -79,9 +73,13 @@ const LearningArea = ({
             skillName={currentSubModule.skillName}
             moduleName={currentSubModule.moduleName}
             submoduleName={currentSubModule.title}
-            SubModule = {currentSubModule}
-            notes={currentSubModule.content?.notes!}
-            setCurrentSubModule={setCurrentSubModule as React.Dispatch<React.SetStateAction<SubModuleData>>}
+            SubModule={currentSubModule}
+            notes={currentSubModule.content!.notes}
+            setCurrentSubModule={
+              setCurrentSubModule as React.Dispatch<
+                React.SetStateAction<SubModuleData>
+              >
+            }
           />
         );
 
@@ -95,7 +93,9 @@ const LearningArea = ({
     return (
       <div className="flex flex-col items-center justify-end w-full p-4 border-[0.2] border-slate-400 rounded-lg bg-gray-800 text-white">
         <div className="flex flex-col items-center justify-center h-[88%] w-full bg-gray-900 rounded-lg">
-          <p className="text-lg text-gray-400 italic">Open a submodule to begin learning</p>
+          <p className="text-lg text-gray-400 italic">
+            Open a submodule to begin learning
+          </p>
         </div>
       </div>
     );
@@ -126,11 +126,11 @@ const LearningArea = ({
             if (
               index === 2 &&
               !(
-                currentSubModule?.content?.articles?.length! > 0 ||
-                currentSubModule?.content?.youtubeLinks?.length! > 0
+                (currentSubModule?.content?.articles?.length ?? 0) > 0 ||
+                (currentSubModule?.content?.youtubeLinks?.length ?? 0) > 0
               )
             ) {
-              return null; // don't render notes button if both are empty
+              return null;
             }
 
             return (
@@ -160,7 +160,7 @@ const LearningArea = ({
       </div>
 
       {/* Learning Area for the Selected Button */}
-      <div className=" flex flex-col items-center justify-center gap-2 h-[85%] w-full bg-gray-900 rounded-lg shadow p-6 overflow-y-auto custom-scrollbar">
+      <div className=" flex flex-col items-center justify-center gap-2 h-[85%] w-full bg-gray-900 rounded-lg shadow overflow-y-auto custom-scrollbar">
         {selectedLearningArea(selectedContentIndex)}
       </div>
     </div>

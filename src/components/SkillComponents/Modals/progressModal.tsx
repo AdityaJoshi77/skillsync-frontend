@@ -1,10 +1,9 @@
 "use client";
 
 import ModalPortal from "@/ModalPortals/ModalPortal";
-import type { ModuleData, SkillData } from "@/InterfacesAndTypes/Interfaces";
+import type { SkillData } from "@/InterfacesAndTypes/Interfaces";
 import { useState } from "react";
-import { IoIosArrowUp } from "react-icons/io";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { ProgressBar } from "@/components/UtilityComponents/ProgressBar";
 
 interface ProgressModalProps {
@@ -13,9 +12,16 @@ interface ProgressModalProps {
 }
 
 const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
+  // Track which module is open (null = none open)
+  const [openModuleIndex, setOpenModuleIndex] = useState<number | null>(null);
+
+  const toggleModule = (idx: number) => {
+    setOpenModuleIndex((prev) => (prev === idx ? null : idx));
+  };
+
   return (
     <ModalPortal>
-      <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center ">
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
         <div className="bg-gray-800 rounded-xl shadow-lg p-6 w-[60%] h-[80%]">
           {/* Modal Header */}
           <div className="flex flex-row items-center justify-between border-b-2 border-slate-500 pb-3">
@@ -34,15 +40,15 @@ const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
           </div>
 
           {/* Modal Content Area*/}
-          <div className="overflow-y-auto h-[75%] mt-6 custom-scrollbar  pr-2">
+          <div className="overflow-y-auto h-[75%] mt-6 custom-scrollbar pr-2">
             <div className="space-y-3">
               {skill.modules.map((module, idx) => {
-                const [open, setOpen] = useState(false);
+                const isOpen = openModuleIndex === idx;
                 return (
                   <div key={idx} className="border border-gray-600 rounded-md">
                     {/* Module Accordion Button */}
                     <button
-                      onClick={() => setOpen(!open)}
+                      onClick={() => toggleModule(idx)}
                       className="w-full flex justify-between items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-left text-white font-medium cursor-pointer"
                     >
                       {/* Module Title */}
@@ -59,14 +65,12 @@ const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
                         </div>
 
                         {/* Module Open/Close DropDown Button */}
-                        <span>
-                          {open ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                        </span>
+                        <span>{isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}</span>
                       </div>
                     </button>
 
                     {/* Module -> SubModules */}
-                    {open && (
+                    {isOpen && (
                       <ul className="px-6 pb-3 pt-1 list-none text-md space-y-1">
                         {module.submodules.map((sub, subIdx) => (
                           <li

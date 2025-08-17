@@ -46,7 +46,7 @@ export const LearningArea_Videos = ({
       }
     };
     getPersistedArticles();
-  }, [submoduleName]);
+  }, [submoduleName, contentId]);
 
   const handleGenerateContent = async (
     skillName: string,

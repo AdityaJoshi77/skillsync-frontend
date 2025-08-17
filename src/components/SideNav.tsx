@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { FaHome, FaRegStickyNote, FaCloud, FaFileAlt, FaSignOutAlt, FaSyncAlt } from "react-icons/fa";
+import {
+  FaHome,
+  FaRegStickyNote,
+  FaCloud,
+  FaFileAlt,
+  FaSignOutAlt,
+  FaSyncAlt,
+} from "react-icons/fa";
 import api from "@/lib/axios";
+import { UserData } from "@/InterfacesAndTypes/Interfaces";
 
 interface NavLinkProps {
   href: string;
@@ -16,18 +24,30 @@ interface NavLinkProps {
 }
 
 // A reusable component for each navigation link
-const NavLink = ({ href, label, icon, isActive, onClick, isLogout, isExpanded }: NavLinkProps) => {
-  const baseClasses = "flex items-center p-3 rounded-lg transition-all duration-200";
-  const activeClasses = isActive ? "bg-gray-700 text-white" : "text-gray-300 hover:bg-gray-800 hover:text-white";
+const NavLink = ({
+  label,
+  icon,
+  isActive,
+  onClick,
+  isLogout,
+  isExpanded,
+}: NavLinkProps) => {
+  const baseClasses =
+    "flex items-center p-3 rounded-lg transition-all duration-200";
+  const activeClasses = isActive
+    ? "bg-gray-700 text-white"
+    : "text-gray-300 hover:bg-gray-800 hover:text-white";
   const logoutClasses = isLogout ? "text-red-400 hover:bg-red-900/50" : "";
-  
+
   return (
     <div
       onClick={onClick}
       className={`${baseClasses} ${activeClasses} ${logoutClasses} cursor-pointer`}
     >
       <div className="text-xl">{icon}</div>
-      {isExpanded && <span className="font-medium ml-3 whitespace-nowrap">{label}</span>}
+      {isExpanded && (
+        <span className="font-medium ml-3 whitespace-nowrap">{label}</span>
+      )}
     </div>
   );
 };
@@ -36,8 +56,20 @@ export default function SideNav() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // State to control the expansion of the side navigation
   const [isExpanded, setIsExpanded] = useState(false);
+  const [user, setUser] = useState<UserData>();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await api.get("/auth/me");
+        setUser(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   // Handle the active link state based on the current path
   const getInitialActiveLink = () => {
@@ -53,7 +85,7 @@ export default function SideNav() {
     router.push(href);
   };
 
-   const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       await api.get("/auth/logout");
       router.push("/"); // Redirect to home
@@ -64,14 +96,18 @@ export default function SideNav() {
 
   return (
     <nav
-      className={`flex flex-col h-screen ${isExpanded ? "w-64" : "w-19"} bg-gray-900 text-white p-4 shadow-xl transition-[width] duration-300 ease-in-out`}
+      className={`flex flex-col h-screen ${
+        isExpanded ? "w-64" : "w-19"
+      } bg-gray-900 text-white p-4 shadow-xl transition-[width] duration-300 ease-in-out`}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
       {/* App Title */}
       <div className="mb-8 overflow-hidden">
         {isExpanded ? (
-          <h1 className="text-3xl font-extrabold italic text-gray-200 text-start cursor-default">SkillSync</h1>
+          <h1 className="text-3xl font-extrabold italic text-gray-200 text-start cursor-default">
+            SkillSync
+          </h1>
         ) : (
           <FaSyncAlt className="text-3xl text-gray-200 mx-auto" />
         )}
@@ -82,7 +118,7 @@ export default function SideNav() {
         <NavLink
           href="/dashboard"
           label="Dashboard"
-          icon={<FaHome color=""/>}
+          icon={<FaHome color="" />}
           isActive={activeLink === "dashboard"}
           onClick={() => handleNavigation("dashboard", "/dashboard")}
           isExpanded={isExpanded}
@@ -92,7 +128,9 @@ export default function SideNav() {
           label="My Notes"
           icon={<FaRegStickyNote />}
           isActive={activeLink === "notes"}
-          onClick={() => handleNavigation("notes", "/dashboard")} // Stub: Redirect to dashboard for now
+          onClick={() =>
+            handleNavigation("notes", `/userNotesPage/${user!._id}`)
+          } // Stub: Redirect to dashboard for now
           isExpanded={isExpanded}
         />
         <NavLink

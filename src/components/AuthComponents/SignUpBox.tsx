@@ -1,6 +1,5 @@
 "use client";
 
-import api from "@/lib/axios";
 import { signUpFunction } from "@/utility_functions/auth_functions";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useState } from "react";
@@ -23,7 +22,7 @@ const SignUpBox = ({ loginOrSignup, setLoginOrSignup }: SignUpBoxProps) => {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
@@ -46,9 +45,17 @@ const SignUpBox = ({ loginOrSignup, setLoginOrSignup }: SignUpBoxProps) => {
       });
       console.log("Successfully Logged in : ", loginResponse);
       router.push("/dashboard");
-    } catch (error: any) {
-      const msg = error.response?.data?.msg || "SignUp Failed";
-      setError(msg);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosErr = err as { response?: { data?: { message?: string } } };
+        const msg =
+          axiosErr.response?.data?.message || "Failed to create skill.";
+        setError(`ERROR : ${msg}`);
+      } else {
+        setError("ERROR : Failed to create skill.");
+      }
+      setTimeout(() => setError(null), 5000);
+      console.error("Error creating skill:", err);
     }
   };
 

@@ -10,6 +10,7 @@ interface NoteItemProps {
   onEdit: (note: NoteData) => void;
   onView: (note: NoteData) => void;
   onDelete: (noteId: string) => void;
+  isNotesPage?: boolean;
 }
 
 export const NoteItem: React.FC<NoteItemProps> = ({
@@ -17,10 +18,11 @@ export const NoteItem: React.FC<NoteItemProps> = ({
   onEdit,
   onView,
   onDelete,
+  isNotesPage = false,
 }) => {
   return (
     <div
-      className="flex flex-col mb-4 p-3 w-full bg-gray-700 hover:bg-gray-600 rounded relative cursor-pointer"
+      className="flex flex-col p-3 w-full bg-gray-700 hover:bg-gray-600 rounded relative cursor-pointer"
       onClick={() => onView(note)}
     >
       <div className="flex justify-between items-center mb-2">
@@ -49,9 +51,26 @@ export const NoteItem: React.FC<NoteItemProps> = ({
         </div>
       </div>
 
-      <div className="prose prose-invert max-h-24 max-w-prose overflow-hidden">
-        <ReactMarkdown>{note.content}</ReactMarkdown>
+      <div className="prose prose-invert max-h-24 max-w-prose overflow-hidden text-white text-sm">
+        {isNotesPage ? (
+          `${note.content}`
+        ) : (
+          <ReactMarkdown>{note.content}</ReactMarkdown>
+        )}
       </div>
+
+      {isNotesPage && (
+        <p className="text-gray-400 text-xs mt-1">
+          {note.skillName} -&gt; {note.moduleName} -&gt; {note.submoduleName}
+        </p>
+      )}
+
+      <p className="text-gray-400 text-xs self-end mt-auto italic">
+        {new Date(note.createdAt).toLocaleString("en-IN", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
+      </p>
     </div>
   );
 };

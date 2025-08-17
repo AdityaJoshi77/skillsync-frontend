@@ -1,7 +1,7 @@
 "use client";
 
 import ModalPortal from "@/ModalPortals/ModalPortal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface SubModuleData {
   title: string;

@@ -3,7 +3,16 @@ export interface NoteData {
   contentId: string;
   title: string;
   content: string;
+  createdAt: string;
+
   userId: string;
+  skillId: string;
+  moduleId: string;
+  submoduleId: string;
+
+  skillName: string;
+  moduleName: string;
+  submoduleName: string;
 }
 
 export interface youtubeLinkData{

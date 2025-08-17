@@ -26,14 +26,14 @@ export default function Home() {
           console.log("Token Not found, initiate new login");
         }
       } catch (err) {
-        console.log("User not logged in");
+        console.log("User not logged in",err);
       } finally{
         setPageLoading(false);
       }
     };
 
     checkUser();
-  }, []);
+  }, [router]);
 
   if (pageLoading) {
     return (

@@ -1,14 +1,14 @@
 import api from "@/lib/axios";
 
 interface LoginData{
-    email:String,
-    password:String
+    email:string,
+    password:string
 }
 
 interface SignUpData{
-    name: String,
-    email: String,
-    password: String
+    name: string,
+    email: string,
+    password: string
 }
 
 const loginFunction = async ({email, password} : LoginData) => {

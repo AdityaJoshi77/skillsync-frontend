@@ -1,7 +1,6 @@
 "use client";
 
 import api from "@/lib/axios";
-import { HiOutlineTrash } from "react-icons/hi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { FaBookOpen, FaClipboardList, FaCheckCircle } from "react-icons/fa";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -106,8 +105,8 @@ const SkillCard = ({
   return (
     <main
       className={`relative overflow-hidden ${
-        generatingRoadmap && "shimmer-bg"
-      } flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200  `}
+        generatingRoadmap ? "shimmer-bg" : ""
+      } flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200`}
     >
       {/* Card Header */}
       <div className="flex items-start justify-between">

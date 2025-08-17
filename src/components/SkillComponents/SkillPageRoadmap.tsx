@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type {
   SkillData,
   ModuleData,
@@ -24,10 +24,6 @@ const SkillPageRoadmap = ({
 }: SkillPageRoadmapProps) => {
   const [skill, setSkill] = useState<SkillData>(skill_from_SkillPage);
   const [openModuleIndex, setOpenModuleIndex] = useState<number>(-1);
-
-  useEffect(() => {
-    setSkill(skill_from_SkillPage);
-  }, [skill_from_SkillPage]);
 
   // backend call to recount progress value on submodule tick/untick
   const updateSkillProgress = async (

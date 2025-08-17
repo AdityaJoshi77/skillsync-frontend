@@ -1,7 +1,7 @@
 interface ProgressBarProps {
   progressPercent: number;
   showProgressPercent: boolean;
-  marginRight: string;
+  marginRight?: string;
 }
 export const ProgressBar = ({
   progressPercent,

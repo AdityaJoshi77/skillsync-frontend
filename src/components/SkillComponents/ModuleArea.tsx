@@ -4,9 +4,6 @@ import type {
   ModuleData,
   SubModuleData,
 } from "@/InterfacesAndTypes/Interfaces";
-import { FaRegStickyNote } from "react-icons/fa";
-import { MdOutlineArticle } from "react-icons/md";
-import { FaYoutube } from "react-icons/fa6";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { ProgressBar } from "../UtilityComponents/ProgressBar";
 
