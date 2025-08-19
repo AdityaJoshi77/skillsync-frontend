@@ -1,3 +1,4 @@
+// DashboardPage.tsx
 "use client";
 
 import api from "@/lib/axios";
@@ -27,7 +28,7 @@ export default function DashboardPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   // only for testing phase in DEV (API Rate Limit Protection)
-  const [useAI, setUseAI] = useState<boolean>(false);
+  const [useAI, setUseAI] = useState<boolean>(true);
 
   // periodic check to ensure session validity
   useEffect(() => {
@@ -71,7 +72,15 @@ export default function DashboardPage() {
     try {
       setSkillSetLoading(true);
       const res = await api.get("/skill");
-      setSkillList(res.data);
+      
+      // Sort the skills by `createdAt` to show the latest first
+      const sortedSkills = res.data.sort((a: SkillData, b: SkillData) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return dateB - dateA; // For descending order (latest first)
+      });
+
+      setSkillList(sortedSkills);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     } finally {
@@ -93,8 +102,10 @@ export default function DashboardPage() {
 
     try {
       const res = await api.post("/skill", { title: trimmed, useAI });
-      console.log(res.data);
-      setSkillList((prev) => [...prev, res.data]);
+      
+      // Add new skill to the beginning of the list to show it first
+      setSkillList((prev) => [res.data, ...prev]);
+      
       setNewSkillTitle("");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
@@ -143,7 +154,9 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold text-gray-300">
             Welcome Back, {user?.name.split(" ")[0]}
           </h1>
-          <button
+
+          {/* useAI DEV Button */}
+          {/* <button
             type="button"
             onClick={() => setUseAI((prev) => !prev)}
             className={`px-4 py-2 rounded-full border transition duration-100 cursor-pointer ${
@@ -151,7 +164,7 @@ export default function DashboardPage() {
             }`}
           >
             {useAI ? "AI active" : "AI not active"}
-          </button>
+          </button> */}
         </div>
 
         {/* Task Creation Section */}

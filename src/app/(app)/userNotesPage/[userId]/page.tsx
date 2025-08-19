@@ -4,11 +4,7 @@
 import api from "@/lib/axios";
 import React, { useEffect, useState } from "react";
 import { dummyUserNotes } from "@/dummydata/dummyUserNotesData";
-import {
-  FaSearch,
-  FaSort,
-  FaFilter,
-} from "react-icons/fa";
+import { FaSearch, FaSort, FaFilter } from "react-icons/fa";
 import NoteViewModal from "@/components/NoteComponents.tsx/NotesSectionModals/NoteViewModal";
 import NoteUpdateModal from "@/components/NoteComponents.tsx/NotesSectionModals/NoteUpdateModal";
 import { NoteItem } from "@/components/NoteComponents.tsx/NoteItem";
@@ -33,21 +29,21 @@ const NotesPage = () => {
     content: "",
   });
 
-  useEffect( () => {
+  useEffect(() => {
     const getUserandNotes = async () => {
       try {
         setPageLoading(true);
-        const notesResponse = await api.get('/notes/getUserNotes');
+        const notesResponse = await api.get("/notes/getUserNotes");
         setUserNotes(notesResponse.data);
-        console.log('User Notes : ', userNotes);
+        console.log("User Notes : ", userNotes);
       } catch (error) {
-        console.log('Could not get user notes', error);
+        console.log("Could not get user notes", error);
       } finally {
         setPageLoading(false);
       }
-    }
+    };
     getUserandNotes();
-  },[]);
+  }, []);
 
   // For stubbed filtering
   const uniqueSkills = [
@@ -111,12 +107,24 @@ const NotesPage = () => {
     (note) => note._id === editNoteId
   );
 
-  if(pageLoading){
-    return(
+  if (pageLoading) {
+    return (
       <div className="h-full w-full">
-        <Spinner_Window/>
+        <Spinner_Window />
       </div>
-    )
+    );
+  }
+
+  if (filteredAndSortedNotes.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <div className="flex items-center justify-center h-4/5 w-4/5 bg-gray-700 rounded-xl ">
+          <p className="text-gray-200 italic text-center font-semibold text-lg ">
+            You have no notes yet.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -227,7 +235,7 @@ const NotesPage = () => {
             )}
           </div>
         </div>
-            
+
         {/* The Grid of NoteItem Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-3 max-h-[80%] overflow-y-auto custom-scrollbar">
           {filteredAndSortedNotes.map((note) => (

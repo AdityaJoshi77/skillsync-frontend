@@ -18,6 +18,7 @@ interface NavLinkProps {
   label: string;
   icon: React.ReactNode;
   isActive: boolean;
+  isAvailable?: boolean;
   onClick: () => void;
   isLogout?: boolean;
   isExpanded: boolean;
@@ -28,21 +29,23 @@ const NavLink = ({
   label,
   icon,
   isActive,
+  isAvailable = true,
   onClick,
   isLogout,
   isExpanded,
 }: NavLinkProps) => {
   const baseClasses =
-    "flex items-center p-3 rounded-lg transition-all duration-200";
+    "flex items-center p-3 rounded-lg transition-all duration-200  text-sm";
   const activeClasses = isActive
     ? "bg-gray-700 text-white"
     : "text-gray-300 hover:bg-gray-800 hover:text-white";
   const logoutClasses = isLogout ? "text-red-400 hover:bg-red-900/50" : "";
+  const unavailableClasses = !isAvailable ? "text-gray-600" : activeClasses;
 
   return (
     <div
       onClick={onClick}
-      className={`${baseClasses} ${activeClasses} ${logoutClasses} cursor-pointer`}
+      className={`${baseClasses} ${activeClasses} ${logoutClasses} ${unavailableClasses} cursor-pointer`}
     >
       <div className="text-xl">{icon}</div>
       {isExpanded && (
@@ -103,13 +106,16 @@ export default function SideNav() {
       onMouseLeave={() => setIsExpanded(false)}
     >
       {/* App Title */}
-      <div className="mb-8 overflow-hidden">
+      <div className="mb-8 overflow-hidden border-b border-gray-700 pb-4">
         {isExpanded ? (
-          <h1 className="text-3xl font-extrabold italic text-gray-200 text-start cursor-default">
+          <h1 className="text-3xl font-extrabold italic text-gray-200 text-start cursor-default ">
             SkillSync
           </h1>
         ) : (
-          <FaSyncAlt className="text-3xl text-gray-200 mx-auto" />
+          // <FaSyncAlt className="text-3xl text-gray-200 mx-auto" />
+          <p className="text-5xl text-center font-extrabold italic text-gray-200  cursor-default ">
+            S
+          </p>
         )}
       </div>
 
@@ -117,7 +123,7 @@ export default function SideNav() {
       <div className="flex-1 space-y-2">
         <NavLink
           href="/dashboard"
-          label="Dashboard"
+          label="Home"
           icon={<FaHome color="" />}
           isActive={activeLink === "dashboard"}
           onClick={() => handleNavigation("dashboard", "/dashboard")}
@@ -135,17 +141,19 @@ export default function SideNav() {
         />
         <NavLink
           href="/cloud"
-          label="Cloud Dev"
+          label="Coming Soon..."
           icon={<FaCloud />}
           isActive={false} // Always false for stubs
+          isAvailable = {false}
           onClick={() => console.log("Cloud Dev clicked")} // Stub
           isExpanded={isExpanded}
         />
         <NavLink
           href="/resume"
-          label="Resume Builder"
+          label="Coming Soon..."
           icon={<FaFileAlt />}
           isActive={false} // Always false for stubs
+          isAvailable = {false}
           onClick={() => console.log("Resume Builder clicked")} // Stub
           isExpanded={isExpanded}
         />

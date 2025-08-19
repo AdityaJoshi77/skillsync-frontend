@@ -51,7 +51,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 to-gray-400 opacity-80 animate-gradient-shift"></div>
         <div className="z-10 text-center md:text-left space-y-8 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-wide">
-            Your Roadmap to <br className="hidden md:inline" /> Tech Mastery.
+            Your Roadmap to <br className="hidden md:inline" /> Skill Mastery.
           </h1>
           <p className="text-xl text-gray-200 max-w-xl mx-auto md:mx-0">
             SkillSync centralizes your learning journey, from curated tutorials

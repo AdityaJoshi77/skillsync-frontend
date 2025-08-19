@@ -29,7 +29,7 @@ export const LearningArea_Videos = ({
   const [isHovered, setIsHovered] = useState(false);
   const [contentVideos, setContentVideos] = useState<youtubeLinkData[]>([]);
   const [videoLoading, setVideoLoading] = useState<boolean>(false);
-  const [useAI, setUseAI] = useState<boolean>(false);
+  const [useAI, setUseAI] = useState<boolean>(true);
 
   useEffect(() => {
     const getPersistedArticles = async () => {
@@ -127,9 +127,9 @@ export const LearningArea_Videos = ({
 
           {/* Video List */}
           <div
-            className="relative flex flex-col h-full gap-2 pt-2 pr-2 overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out"
+            className="relative flex flex-col h-full gap-2 pt-2 pr-2 overflow-y-auto custom-scrollbar transition-all duration-300 ease-in-out bg-gray-950"
             style={{
-              width: isHovered ? "15%" : "6%",
+              width: isHovered ? "50%" : "8%",
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -137,14 +137,14 @@ export const LearningArea_Videos = ({
             {contentVideos.map((link, idx) => (
               <button
                 key={idx}
-                className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md cursor-pointer transition-colors duration-200 ${
+                className={`flex items-center justify-center gap-2 px-3 py-2 text-xs text-wrap rounded-md cursor-pointer transition-colors duration-200 mx-3 ${
                   idx === selectedIndex ? "bg-gray-600" : "bg-gray-800"
                 } hover:bg-gray-600`}
                 onClick={() => setSelectedIndex(idx)}
               >
-                <FaYoutube className="text-red-500 min-w-[20px]" />
+                <FaYoutube className="text-red-600 min-w-[20px]" />
                 {isHovered && (
-                  <span className="whitespace-nowrap">Video {idx + 1}</span>
+                  <span className="text-left">Video {idx + 1} : {link.title}</span>
                 )}
               </button>
             ))}
@@ -167,13 +167,15 @@ export const LearningArea_Videos = ({
           >
             Generate Videos
           </button>
-          <button
+
+          {/* useAI DEV Button */}
+          {/* <button
             className={`rounded-full px-4 border-2 border-slate-400 mt-2 cursor-pointer
           ${useAI ? "text-black bg-gray-300" : " bg-gray-800 text-gray-200"}`}
             onClick={() => setUseAI(!useAI)}
           >
             {useAI ? "AI ACTIVE !" : "Ai Inactive"}
-          </button>
+          </button> */}
         </div>
       )}
     </div>

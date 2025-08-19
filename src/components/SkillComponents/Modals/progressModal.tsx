@@ -22,11 +22,11 @@ const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
   return (
     <ModalPortal>
       <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-        <div className="bg-gray-800 rounded-xl shadow-lg p-6 w-[60%] h-[80%]">
+        <div className="flex flex-col justify-between bg-gray-800 rounded-xl shadow-lg p-6 w-[60%] h-[80%]">
           {/* Modal Header */}
           <div className="flex flex-row items-center justify-between border-b-2 border-slate-500 pb-3">
-            <h2 className="text-lg font-semibold mb-2 text-gray-200">
-              Progress Review: <span className="italic">{skill.title}</span>
+            <h2 className="text-md font-semibold mb-2 text-gray-200 capitalize">
+               {skill.title}: <span className="capitalize">Progress Review</span>
             </h2>
             <div className="flex items-center justify-end w-[60%] dark:text-white mr-5">
               <div className="flex items-center justify-end w-full -mr-3">
@@ -65,7 +65,9 @@ const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
                         </div>
 
                         {/* Module Open/Close DropDown Button */}
-                        <span>{isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}</span>
+                        <span>
+                          {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </span>
                       </div>
                     </button>
 
@@ -93,7 +95,7 @@ const ProgressModal = ({ skill, setShowProgressModal }: ProgressModalProps) => {
           </div>
 
           {/* Close Button */}
-          <div className="flex justify-end gap-4 mt-4 mr-2">
+          <div className="flex justify-end gap-4">
             <button
               onClick={() => setShowProgressModal(false)}
               className="px-4 py-1 text-sm rounded-md mr-2 bg-slate-300 hover:bg-slate-400 cursor-pointer"

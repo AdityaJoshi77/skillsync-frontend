@@ -64,6 +64,7 @@ export interface ModuleData {
 export interface SkillData {
   _id: string;
   userId: string;
+  createdAt: string;
   title: string;
   modules: ModuleData[];
   totalSubmodules: number;

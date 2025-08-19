@@ -84,7 +84,7 @@ const SkillPageRoadmap = ({
     <section className={`flex flex-col items-center justify-between bg-gray-800 rounded-xl shadow-lg p-6  h-full border-[0.2] border-slate-400 overflow-y-auto custom-scrollbar ${showLearningArea ? 'w-2/5':'w-4/5'}`}>
       {/* Header */}
       <div className="flex flex-row items-center justify-between w-full border-b-2 border-slate-500 pb-3 mt-4 ">
-        <h2 className="text-xl font-semibold text-gray-200">{skill.title}</h2>
+        <h2 className="text-xl font-semibold text-gray-200 capitalize">{skill.title}</h2>
         <div className="flex items-center justify-end w-[60%] text-white">
           <ProgressBar
             progressPercent={skill.progress}

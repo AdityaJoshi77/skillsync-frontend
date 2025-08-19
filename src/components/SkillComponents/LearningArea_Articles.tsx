@@ -23,7 +23,7 @@ export const LearningArea_Articles = ({
   const [contentArticles, setContentArticles] =
     useState<ArticleData[]>([]);
   const [articleLoading, setArticleLoading] = useState<boolean>(false);
-  const [useAI, setUseAI] = useState<boolean>(false);
+  const [useAI, setUseAI] = useState<boolean>(true);
 
   useEffect(() => {
     const getPersistedArticles = async () => {
@@ -137,13 +137,15 @@ export const LearningArea_Articles = ({
           >
             Generate Articles
           </button>
-          <button
+
+          {/* useAI DEV Button */}
+          {/* <button
             className={`rounded-full px-4 border-2 border-slate-400 mt-2 cursor-pointer
           ${useAI ? "text-black bg-gray-300" : " bg-gray-800 text-gray-200"}`}
             onClick={() => setUseAI(!useAI)}
           >
             {useAI ? "AI ACTIVE !" : "Ai Inactive"}
-          </button>
+          </button> */}
         </div>
       )}
     </div>

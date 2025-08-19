@@ -109,8 +109,8 @@ const SkillCard = ({
       } flex flex-col justify-between w-full h-48 p-4 rounded-lg shadow-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 transition-colors duration-200`}
     >
       {/* Card Header */}
-      <div className="flex items-start justify-between">
-        <h3 className="text-md font-bold text-slate-200 capitalize">
+      <div className="flex items-start justify-between border-b border-gray-400">
+        <h3 className="text-md font-bold text-gray-200 capitalize ">
           {skill.title}
         </h3>
 
@@ -164,19 +164,19 @@ const SkillCard = ({
               <div className="flex items-center space-x-2 text-gray-300">
                 <FaBookOpen className="text-amber-400" />
                 <span className="text-sm">
-                  Total Modules: {skill.modules.length}
+                  Total Modules: <span className="font-bold text-white">{skill.modules.length}</span>
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
                 <FaCheckCircle className="text-emerald-400" />
                 <span className="text-sm">
-                  Completed Submodules: {skill.completedSubModules}
+                  Finished Submodules: <span className="font-bold text-white">{skill.completedSubModules}</span>
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
                 <FaClipboardList className="text-blue-400" />
                 <span className="text-sm">
-                  Total Submodules: {skill.totalSubmodules}
+                  Total Submodules: <span className="font-bold text-white">{skill.totalSubmodules}</span>
                 </span>
               </div>
               <button
